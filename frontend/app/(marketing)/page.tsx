@@ -1,6 +1,3 @@
-"use client";
-
-import { useEffect } from 'react';
 import Navbar from '@/components/marketing/Navbar';
 import HeroSection from '@/components/marketing/HeroSection';
 import HowItWorks from '@/components/marketing/HowItWorks';
@@ -11,11 +8,6 @@ import Footer from '@/components/marketing/Footer';
 import Link from 'next/link';
 
 export default function HomePage() {
-  // Yeh dummy hook Next.js ko majboor karega client-reference-manifest banane par
-  useEffect(() => {
-    console.log("AutoFlow Live");
-  }, []);
-
   return (
     <>
       <Navbar />
