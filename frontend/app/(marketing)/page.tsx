@@ -1,3 +1,5 @@
+"use client";
+
 import Navbar from '@/components/marketing/Navbar';
 import HeroSection from '@/components/marketing/HeroSection';
 import HowItWorks from '@/components/marketing/HowItWorks';
@@ -7,11 +9,15 @@ import TestimonialsSection from '@/components/marketing/TestimonialsSection';
 import Footer from '@/components/marketing/Footer';
 import Link from 'next/link';
 
+// Note: "use client" ke saath metadata export karne par Next.js build error deta hai, 
+// isliye compilation safe rakhne ke liye ise yahan comment kiya hai.
+/*
 export const metadata = {
   title: 'AutoFlow — Instagram Comment-to-DM Automation for Indian Businesses',
   description:
     'AutoFlow se Instagram automation karo. Koi bhi keyword comment kare — turant DM jaaye. Leads capture karo, sales badhao. 24/7 automatic. Free plan available.',
 };
+*/
 
 export default function HomePage() {
   return (
