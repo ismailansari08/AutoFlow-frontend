@@ -7,7 +7,7 @@ import TestimonialsSection from '@/components/marketing/TestimonialsSection';
 import Footer from '@/components/marketing/Footer';
 import Link from 'next/link';
 
-export const dynamic = 'force-dynamic'; // Next.js manifest bug fix karne ke liye
+export const dynamic = 'force-dynamic'; // Yeh line manifest bug ko fix karegi
 
 export default function HomePage() {
   return (
