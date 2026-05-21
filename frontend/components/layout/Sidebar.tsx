@@ -10,6 +10,7 @@ import {
   Cog6ToothIcon,
   XMarkIcon,
   ArrowRightOnRectangleIcon,
+  Bars3Icon,
 } from '@heroicons/react/24/outline';
 import { useAuth } from '@/lib/hooks/useAuth';
 
@@ -31,7 +32,7 @@ export default function Sidebar() {
       <div className="px-5 py-5 border-b border-white/5 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 bg-gradient-to-br from-orange-500 to-pink-600 rounded-lg flex items-center justify-center">
-            <Instagram size={14} className="text-white" />
+            <Bars3Icon className="h-4 w-4 text-white" />
           </div>
           <span className="text-white font-bold text-lg">AutoFlow</span>
         </div>
