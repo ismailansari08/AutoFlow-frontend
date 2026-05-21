@@ -22,10 +22,6 @@ const navItems = [
   { href: '/settings', label: 'Settings', icon: Cog6ToothIcon },
 ];
 
-<<<<<<< HEAD
-=======
-// 1. SidebarContent ko bahar nikal diya taaki re-render performance sahi rahe
->>>>>>> 393282da84bf1f470a17a902ddce650557d9a001
 interface SidebarContentProps {
   pathname: string;
   user: any;
@@ -33,11 +29,7 @@ interface SidebarContentProps {
   setMobileOpen: (open: boolean) => void;
 }
 
-<<<<<<< HEAD
 const SidebarContent: React.FC<SidebarContentProps> = ({ pathname, user, logout, setMobileOpen }) => (
-=======
-const SidebarContent = ({ pathname, user, logout, setMobileOpen }: SidebarContentProps) => (
->>>>>>> 393282da84bf1f470a17a902ddce650557d9a001
   <div className="flex flex-col h-full">
     <div className="px-5 py-5 border-b border-white/5 flex items-center justify-between">
       <div className="flex items-center gap-2">
@@ -50,10 +42,7 @@ const SidebarContent = ({ pathname, user, logout, setMobileOpen }: SidebarConten
         <XMarkIcon className="h-5 w-5" />
       </button>
     </div>
-<<<<<<< HEAD
 
-=======
->>>>>>> 393282da84bf1f470a17a902ddce650557d9a001
     <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
       {navItems.map((item) => {
         const isActive = pathname === item.href;
@@ -74,10 +63,7 @@ const SidebarContent = ({ pathname, user, logout, setMobileOpen }: SidebarConten
         );
       })}
     </nav>
-<<<<<<< HEAD
 
-=======
->>>>>>> 393282da84bf1f470a17a902ddce650557d9a001
     <div className="px-3 py-4 border-t border-white/5">
       <div className="flex items-center gap-3 px-3 py-2 mb-2">
         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-pink-600 flex items-center justify-center flex-shrink-0">
@@ -86,27 +72,18 @@ const SidebarContent = ({ pathname, user, logout, setMobileOpen }: SidebarConten
           </span>
         </div>
         <div className="min-w-0">
-<<<<<<< HEAD
           <div className="text-white text-xs font-medium truncate">
             {user?.name || 'User'}
           </div>
           <div className="text-gray-500 text-xs truncate">
             {user?.email}
           </div>
-=======
-          <div className="text-white text-xs font-medium truncate">{user?.name || 'User'}</div>
-          <div className="text-gray-500 text-xs truncate">{user?.email}</div>
->>>>>>> 393282da84bf1f470a17a902ddce650557d9a001
         </div>
       </div>
       <button
         onClick={logout}
         className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-colors"
       >
-<<<<<<< HEAD
-=======
-        {/* FIX: size={16} ko h-4 w-4 className se replace kiya */}
->>>>>>> 393282da84bf1f470a17a902ddce650557d9a001
         <ArrowRightOnRectangleIcon className="h-4 w-4" />
         Sign Out
       </button>
