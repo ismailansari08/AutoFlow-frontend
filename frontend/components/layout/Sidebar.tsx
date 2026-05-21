@@ -37,7 +37,7 @@ export default function Sidebar() {
           <span className="text-white font-bold text-lg">AutoFlow</span>
         </div>
         <button className="md:hidden text-gray-400" onClick={() => setMobileOpen(false)}>
-          <XMarkIcon size={20} />
+          <XMarkIcon className="h-5 w-5" />
         </button>
       </div>
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
