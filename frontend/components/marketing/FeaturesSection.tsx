@@ -2,8 +2,8 @@
 
 import { motion } from 'framer-motion';
 import {
+  BarChart3,
   Bot,
-  ChartColumn,
   MessageSquareText,
   ShieldCheck,
   Sparkles,
@@ -28,7 +28,7 @@ const features = [
     desc: 'Review every DM, hand off conversations, and keep follow-ups moving in one place.',
   },
   {
-    icon: ChartColumn,
+    icon: BarChart3,
     title: 'Conversion visibility',
     desc: 'Track delivery, response, and funnel performance without exporting spreadsheets.',
   },
