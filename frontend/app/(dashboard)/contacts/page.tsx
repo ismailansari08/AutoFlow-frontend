@@ -1,108 +1,95 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import api from '@/lib/api/auth.api';
 import { TrendingUp, Users, AlertCircle, RefreshCw } from 'lucide-react';
 import { EmptyState } from '@/components/empty/EmptyState';
 import { VirtualList } from '@/components/ui/VirtualList';
+import { useContactsQuery } from '@/lib/queries/useContactsQuery';
+import { getLeadBadge, formatContactName } from '@/lib/utils/lead-badge';
+import type { Contact } from '@/lib/types/contact';
+
+function ContactRow({ contact }: { contact: Contact }) {
+  const badge = getLeadBadge(contact.leadScore);
+  return (
+    <div
+      className="flex items-center gap-3 px-4 h-full border-b"
+      style={{ borderColor: 'var(--border-glass)' }}
+    >
+      <div
+        className="w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-semibold uppercase shrink-0"
+        style={{ background: 'linear-gradient(135deg, #818CF8, #22D3EE)' }}
+        aria-hidden
+      >
+        {contact.username?.charAt(0) || 'U'}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>
+          {formatContactName(contact)}
+        </p>
+        <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+          @{contact.username}
+        </p>
+      </div>
+      <span
+        className={`px-2.5 py-1 rounded-full text-[10px] font-bold border ${badge.className}`}
+      >
+        {badge.label}
+      </span>
+    </div>
+  );
+}
 
 export default function ContactsPage() {
-  const [contacts, setContacts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const loadContacts = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await api.get('/contacts');
-      setContacts(res.data ?? []);
-    } catch (e) {
-      setError('Failed to load contacts');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => { loadContacts(); }, []);
-
-  const getLeadBadge = (score: number) => {
-    if (score >= 50) return {
-      label: 'Hot Lead 🔥',
-      style: { background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#F87171' },
-    };
-    if (score >= 20) return {
-      label: 'Warm Lead',
-      style: { background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)', color: '#FBBF24' },
-    };
-    return {
-      label: 'New Lead',
-      style: { background: 'rgba(129,140,248,0.08)', border: '1px solid rgba(129,140,248,0.15)', color: '#A5B4FC' },
-    };
-  };
+  const { data: contacts = [], isLoading, isError, refetch, isFetching } = useContactsQuery();
 
   return (
     <div
       className="p-4 md:p-6 max-w-6xl mx-auto space-y-6 min-h-screen"
       style={{ background: 'var(--bg-main)', color: 'var(--text-primary)' }}
     >
-      {/* ── Header ─────────────────────────────────────── */}
       <div
         className="flex items-center justify-between pb-6"
         style={{ borderBottom: '1px solid var(--border-glass)' }}
       >
         <div>
-          <h1 className="text-xl md:text-2xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
-            Contacts & Leads
-          </h1>
+          <h1 className="text-xl md:text-2xl font-bold tracking-tight">Contacts & Leads</h1>
           <p className="text-sm mt-0.5" style={{ color: 'var(--text-muted)' }}>
             Manage your Instagram leads and contacts
           </p>
         </div>
         <button
-          onClick={loadContacts}
-          disabled={loading}
+          type="button"
+          onClick={() => refetch()}
+          disabled={isFetching}
           className="p-2 rounded-lg transition-colors disabled:opacity-40"
           style={{ color: 'var(--text-muted)' }}
-          onMouseEnter={e => (e.currentTarget.style.color = 'var(--text-primary)')}
-          onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-muted)')}
+          aria-label="Refresh contacts"
         >
-          <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
+          <RefreshCw size={15} className={isFetching ? 'animate-spin' : ''} />
         </button>
       </div>
 
-      {/* ── Loading skeleton ────────────────────────────── */}
-      {loading && (
-        <div className="space-y-3">
-          {[1, 2, 3].map(i => (
-            <div
-              key={i}
-              className="h-16 rounded-xl empty-pulse"
-              style={{ background: 'rgba(129,140,248,0.04)' }}
-            />
+      {isLoading && (
+        <div className="space-y-3" aria-busy="true">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-16 rounded-xl empty-pulse" style={{ background: 'rgba(129,140,248,0.04)' }} />
           ))}
         </div>
       )}
 
-      {/* ── Glass error alert ────────────────────────────── */}
-      {error && !loading && (
+      {isError && !isLoading && (
         <div className="glass-alert glass-alert-error rounded-xl">
           <AlertCircle size={16} className="shrink-0" />
           <div className="flex-1">
             <p className="font-medium text-xs">Unable to load contacts</p>
             <p className="text-[11px] mt-0.5 opacity-75">Check your backend connection</p>
           </div>
-          <button
-            onClick={loadContacts}
-            className="text-[11px] font-semibold underline underline-offset-2 shrink-0"
-          >
+          <button type="button" onClick={() => refetch()} className="text-[11px] font-semibold underline shrink-0">
             Retry
           </button>
         </div>
       )}
 
-      {/* ── Empty state ─────────────────────────────────── */}
-      {!error && contacts.length === 0 && !loading && (
+      {!isError && contacts.length === 0 && !isLoading && (
         <EmptyState
           icon={<Users size={32} style={{ color: '#818CF8' }} />}
           title="No contacts yet"
@@ -112,68 +99,30 @@ export default function ContactsPage() {
         />
       )}
 
-      {/* ── Virtualized list (>25 contacts) ─────────────── */}
-      {contacts.length > 0 && !loading && !error && contacts.length > 25 && (
+      {contacts.length > 0 && !isLoading && !isError && contacts.length > 25 && (
         <div
-          className="rounded-2xl overflow-hidden"
-          style={{
-            background: 'var(--bg-card)',
-            border: '1px solid var(--border-glass)',
-            backdropFilter: 'blur(16px)',
-          }}
+          className="rounded-2xl overflow-hidden premium-card"
+          style={{ backdropFilter: 'blur(16px)' }}
         >
           <VirtualList
             items={contacts}
             height={Math.min(640, contacts.length * 72)}
             itemHeight={72}
             getKey={(c) => c.id}
-            renderItem={(contact) => {
-              const badge = getLeadBadge(contact.leadScore);
-              return (
-                <div
-                  className="flex items-center gap-3 px-4 h-full"
-                  style={{ borderBottom: '1px solid var(--border-glass)' }}
-                >
-                  <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-semibold uppercase shrink-0"
-                    style={{ background: 'linear-gradient(135deg, #818CF8, #22D3EE)' }}
-                  >
-                    {contact.username?.charAt(0) || 'U'}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>
-                      {contact.name || 'Anonymous'}
-                    </p>
-                    <p className="text-xs" style={{ color: 'var(--text-muted)' }}>@{contact.username}</p>
-                  </div>
-                  <span className="px-2.5 py-1 rounded-full text-[10px] font-bold" style={badge.style}>
-                    {badge.label}
-                  </span>
-                </div>
-              );
-            }}
+            renderItem={(contact) => <ContactRow contact={contact} />}
           />
         </div>
       )}
 
-      {/* ── Premium table (≤25 contacts) ────────────────── */}
-      {contacts.length > 0 && !loading && !error && contacts.length <= 25 && (
-        <div
-          className="rounded-2xl table-responsive"
-          style={{
-            background: 'var(--bg-card)',
-            border: '1px solid var(--border-glass)',
-            backdropFilter: 'blur(16px)',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
-          }}
-        >
+      {contacts.length > 0 && !isLoading && !isError && contacts.length <= 25 && (
+        <div className="rounded-2xl table-responsive premium-card" style={{ backdropFilter: 'blur(16px)' }}>
           <table className="w-full text-left border-collapse min-w-[600px]">
             <thead>
               <tr style={{ borderBottom: '1px solid var(--border-glass)' }}>
-                {['User', 'Username', 'Lead Score', 'Status'].map(col => (
+                {['User', 'Username', 'Lead Score', 'Status'].map((col) => (
                   <th
                     key={col}
-                    className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider select-none"
+                    className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider"
                     style={{ color: 'var(--text-muted)', background: 'rgba(255,255,255,0.02)' }}
                   >
                     {col}
@@ -185,13 +134,7 @@ export default function ContactsPage() {
               {contacts.map((contact) => {
                 const badge = getLeadBadge(contact.leadScore);
                 return (
-                  <tr
-                    key={contact.id}
-                    className="transition-colors"
-                    style={{ borderBottom: '1px solid var(--border-glass)' }}
-                    onMouseEnter={e => (e.currentTarget.style.background = 'rgba(129,140,248,0.04)')}
-                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                  >
+                  <tr key={contact.id} className="hover:bg-indigo-500/[0.04] transition-colors border-b border-[var(--border-glass)]">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div
@@ -200,27 +143,20 @@ export default function ContactsPage() {
                         >
                           {contact.username?.charAt(0) || 'U'}
                         </div>
-                        <span className="text-xs font-semibold" style={{ color: 'var(--text-primary)' }}>
-                          {contact.name || 'Anonymous'}
-                        </span>
+                        <span className="text-xs font-semibold">{formatContactName(contact)}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 text-xs" style={{ color: 'var(--text-muted)' }}>
                       @{contact.username}
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-1.5" style={{ color: '#818CF8' }}>
+                      <div className="flex items-center gap-1.5 text-indigo-400">
                         <TrendingUp size={13} />
-                        <span className="font-bold text-xs" style={{ color: 'var(--text-primary)' }}>
-                          {contact.leadScore}
-                        </span>
+                        <span className="font-bold text-xs">{contact.leadScore}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span
-                        className="px-2.5 py-1 rounded-full text-[10px] uppercase tracking-wider font-extrabold"
-                        style={badge.style}
-                      >
+                      <span className={`px-2.5 py-1 rounded-full text-[10px] uppercase font-extrabold border ${badge.className}`}>
                         {badge.label}
                       </span>
                     </td>

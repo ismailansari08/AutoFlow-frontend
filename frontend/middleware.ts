@@ -1,30 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-
-const PUBLIC_PATHS = [
-  '/',
-  '/login',
-  '/signup',
-  '/about',
-  '/contact',
-  '/privacy',
-  '/terms',
-];
-
-const PROTECTED_PREFIXES = [
-  '/dashboard',
-  '/inbox',
-  '/contacts',
-  '/workflows',
-  '/settings',
-  '/billing',
-  '/analytics',
-  '/onboarding',
-  '/team',
-  '/security',
-  '/templates',
-  '/design-system',
-];
+import { PROTECTED_PREFIXES, PUBLIC_PATHS } from '@/lib/constants/routes';
 
 function hasSession(req: NextRequest): boolean {
   const cookieToken = req.cookies.get('token')?.value;

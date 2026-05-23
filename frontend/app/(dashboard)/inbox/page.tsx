@@ -1,257 +1,60 @@
 'use client';
 
-import { useState, useEffect, useRef, type FormEvent } from 'react';
+import { GlassInput } from '@/components/ui/GlassField';
 import {
   Search,
   Send,
   Instagram,
   Sparkles,
-  Sliders,
   MessageCircle,
-  Plus,
   X,
-  Star,
-  TrendingUp,
-  FileText,
   ArrowLeft,
   Paperclip,
   Check,
   Loader2,
-  ChevronRight,
-  Trash2
 } from 'lucide-react';
-import { useInbox } from '@/lib/hooks/useInbox';
-import { useSocket } from '@/lib/hooks/useSocket';
-import { useInboxStore } from '@/lib/store/inbox.store';
-import { fetchConversationSummary, fetchSmartReplies } from '@/lib/api/ai.api';
 import api from '@/lib/api/auth.api';
-import type { InboxConversation } from '@/lib/inbox/mappers';
 import { EmptyState } from '@/components/empty/EmptyState';
 import { VirtualList } from '@/components/ui/VirtualList';
-import { useSwipeBack } from '@/lib/hooks/useSwipeBack';
+import { useInboxPage } from '@/lib/hooks/useInboxPage';
+import { InboxCrmSidebar } from '@/components/inbox/InboxCrmSidebar';
 
 export default function InboxPage() {
   const {
     conversations,
     loading,
-    error,
-    sending,
-    loadMessages,
-    sendMessage,
+    selectedConv,
+    searchQuery,
+    setSearchQuery,
+    mobileView,
+    setMobileView,
+    crmSaving,
+    filteredConversations,
+    typingConvs,
     updateLocalConv,
-    updateContactCRM,
-  } = useInbox();
-
-  const [selectedConvId, setSelectedConvId] = useState<string | null>(null);
-  const [inputText, setInputText] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [newTagInput, setNewTagInput] = useState('');
-  const [mobileView, setMobileView] = useState<'list' | 'chat'>('list');
-
-  useSwipeBack(mobileView === 'chat', () => setMobileView('list'));
-  const chatEndRef = useRef<HTMLDivElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const notesTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Socket Connection and Emitters
-  const { emitTyping } = useSocket(selectedConvId);
-
-  // Zustand Store Selectors
-  const aiTypingConvId = useInboxStore((s) => s.aiTypingConvId);
-  const typingConvs = useInboxStore((s) => s.typingConvs);
-  const smartReplies = useInboxStore((s) => s.smartReplies);
-  const setSmartReplies = useInboxStore((s) => s.setSmartReplies);
-
-  // AI Summary State
-  const [aiSummary, setAiSummary] = useState<string | null>(null);
-  const [loadingSummary, setLoadingSummary] = useState(false);
-
-  // CRM Autosave feedback state
-  const [crmSaving, setCrmSaving] = useState(false);
-
-  // File Attachment State (mocked upload)
-  const [attachments, setAttachments] = useState<Array<{ name: string; size: number; type: string }>>([]);
-
-  // Auto-select first conversation
-  useEffect(() => {
-    if (conversations.length && !selectedConvId) {
-      setSelectedConvId(conversations[0].id);
-    }
-  }, [conversations, selectedConvId]);
-
-  // Load message thread
-  useEffect(() => {
-    if (selectedConvId) loadMessages(selectedConvId);
-  }, [selectedConvId, loadMessages]);
-
-  const selectedConv =
-    conversations.find((c) => c.id === selectedConvId) ?? conversations[0];
-
-  // Auto scroll to bottom on new messages
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [selectedConv?.messages, aiTypingConvId, typingConvs]);
-
-  // Load smart replies & reset summary on conversation change
-  useEffect(() => {
-    setAiSummary(null);
-    if (!selectedConvId) return;
-
-    let isCurrent = true;
-    const loadReplies = async () => {
-      try {
-        const replies = await fetchSmartReplies(selectedConvId);
-        if (isCurrent) {
-          setSmartReplies(replies);
-        }
-      } catch (err) {
-        console.error('Error fetching smart replies:', err);
-      }
-    };
-
-    loadReplies();
-    return () => {
-      isCurrent = false;
-    };
-  }, [selectedConvId, setSmartReplies]);
-
-  // Composer typing signal
-  const handleInputChange = (val: string) => {
-    setInputText(val);
-    if (!selectedConv) return;
-
-    // Send typing true to socket
-    emitTyping(selectedConv.id, true);
-
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current);
-    }
-
-    // Set timeout to clear typing state after 2.5s of inactivity
-    typingTimeoutRef.current = setTimeout(() => {
-      emitTyping(selectedConv.id, false);
-    }, 2500);
-  };
-
-  const handleSendMessage = async (e?: FormEvent) => {
-    e?.preventDefault();
-    if (!inputText.trim() && attachments.length === 0) return;
-    if (!selectedConv) return;
-
-    const text = inputText.trim() || `Sent ${attachments.length} attachment(s)`;
-    setInputText('');
-    setAttachments([]);
-
-    // Clear typing timeout and emit false
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current);
-    }
-    emitTyping(selectedConv.id, false);
-
-    try {
-      await sendMessage(selectedConv.id, text);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleSelectConversation = (id: string) => {
-    setSelectedConvId(id);
-    setMobileView('chat');
-  };
-
-  const filteredConversations = conversations.filter(
-    (c) =>
-      c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.username.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
-
-  const patchSelected = (patch: Partial<InboxConversation>) => {
-    if (!selectedConv) return;
-    updateLocalConv(selectedConv.id, patch);
-  };
-
-  // Persist CRM fields helper
-  const persistCRMDetails = async (fieldPatch: { notes?: string; tags?: string[]; leadScore?: number }) => {
-    if (!selectedConv || !selectedConv.contactId) return;
-    setCrmSaving(true);
-    try {
-      await updateContactCRM(selectedConv.contactId, fieldPatch);
-    } catch (err) {
-      console.error('Error persisting contact CRM details:', err);
-    } finally {
-      setTimeout(() => setCrmSaving(false), 800);
-    }
-  };
-
-  // Notes changes with local updates + debounced saving
-  const handleNotesChange = (val: string) => {
-    patchSelected({ notes: val });
-
-    if (notesTimeoutRef.current) {
-      clearTimeout(notesTimeoutRef.current);
-    }
-
-    notesTimeoutRef.current = setTimeout(() => {
-      persistCRMDetails({ notes: val });
-    }, 1500);
-  };
-
-  // Save notes immediately when focus leaves the textarea
-  const handleNotesBlur = () => {
-    if (notesTimeoutRef.current) {
-      clearTimeout(notesTimeoutRef.current);
-    }
-    if (selectedConv) {
-      persistCRMDetails({ notes: selectedConv.notes });
-    }
-  };
-
-  // Instant save tags
-  const handleAddTag = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!newTagInput.trim() || !selectedConv) return;
-    const newTag = newTagInput.trim();
-    if (selectedConv.tags.includes(newTag)) return;
-
-    const updatedTags = [...selectedConv.tags, newTag];
-    patchSelected({ tags: updatedTags });
-    setNewTagInput('');
-
-    await persistCRMDetails({ tags: updatedTags });
-  };
-
-  const handleRemoveTag = async (tagToRemove: string) => {
-    if (!selectedConv) return;
-    const updatedTags = selectedConv.tags.filter((t) => t !== tagToRemove);
-    patchSelected({ tags: updatedTags });
-
-    await persistCRMDetails({ tags: updatedTags });
-  };
-
-  // Lead Score change
-  const handleLeadScoreChange = async (score: number) => {
-    if (!selectedConv) return;
-    const val = Math.max(0, Math.min(100, score));
-    patchSelected({ leadScore: val });
-    await persistCRMDetails({ leadScore: val });
-  };
-
-  // Generate AI summary
-  const handleGenerateSummary = async () => {
-    if (!selectedConv) return;
-    setLoadingSummary(true);
-    try {
-      const summary = await fetchConversationSummary(selectedConv.id);
-      setAiSummary(summary);
-    } catch (err) {
-      console.error('Failed to generate summary:', err);
-      setAiSummary('Failed to compile summary. Ensure OpenAI keys are valid.');
-    } finally {
-      setLoadingSummary(false);
-    }
-  };
+    handleSelectConversation,
+    chatEndRef,
+    fileInputRef,
+    aiTypingConvId,
+    smartReplies,
+    attachments,
+    setAttachments,
+    inputText,
+    handleInputChange,
+    handleSendMessage,
+    sending,
+    handleNotesChange,
+    handleNotesBlur,
+    handleAddTag,
+    handleRemoveTag,
+    handleLeadScoreChange,
+    patchSelected,
+    aiSummary,
+    loadingSummary,
+    handleGenerateSummary,
+    newTagInput,
+    setNewTagInput,
+  } = useInboxPage();
 
   if (loading && conversations.length === 0) {
     return (
@@ -260,6 +63,14 @@ export default function InboxPage() {
           <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#818CF8' }} />
           <span className="text-xs font-light" style={{ color: 'var(--text-muted)' }}>Loading inbox workspace...</span>
         </div>
+      </div>
+    );
+  }
+
+  if (!loading && conversations.length > 0 && !selectedConv) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-main)' }}>
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-400" />
       </div>
     );
   }
@@ -319,16 +130,13 @@ export default function InboxPage() {
           <div className="p-4 border-b" style={{ borderColor: 'var(--border-glass)' }}>
             <div className="relative">
               <Search className="absolute left-3 top-2.5 text-[#606060]" size={13} />
-              <input
+              <GlassInput
                 type="search"
                 placeholder="Filter chats by name..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 aria-label="Filter conversations by name"
-                className="w-full rounded-xl pl-9 pr-4 py-2.5 text-xs outline-none transition-all"
-                style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border-glass)', color: 'var(--text-primary)' }}
-                onFocus={e => (e.currentTarget.style.borderColor = 'var(--border-glow)')}
-                onBlur={e => (e.currentTarget.style.borderColor = 'var(--border-glass)')}
+                className="pl-9 pr-4 py-2.5 text-xs"
               />
             </div>
           </div>
@@ -675,15 +483,13 @@ export default function InboxPage() {
             </button>
 
             {/* Main composer input */}
-            <input
+            <GlassInput
               id="composer-input"
               value={inputText}
               onChange={(e) => handleInputChange(e.target.value)}
-              placeholder={attachments.length > 0 ? "Add message details..." : "Type custom DM response..."}
-              className="flex-1 rounded-xl px-4 py-3 text-sm md:text-xs outline-none transition-all font-light"
-              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border-glass)', color: 'var(--text-primary)' }}
-              onFocus={e => (e.currentTarget.style.borderColor = 'var(--border-glow)')}
-              onBlur={e => (e.currentTarget.style.borderColor = 'var(--border-glass)')}
+              placeholder={attachments.length > 0 ? 'Add message details...' : 'Type custom DM response...'}
+              className="flex-1 px-4 py-3 text-sm md:text-xs font-light"
+              aria-label="Message composer"
             />
 
             {/* Send CTA */}
@@ -698,147 +504,21 @@ export default function InboxPage() {
           </form>
         </div>
 
-        {/* Lead Details CRM Sidebar */}
-        <div className="hidden lg:flex w-80 border-l flex-col p-5 overflow-y-auto shrink-0 select-none" style={{ background: 'var(--bg-sidebar)', borderColor: 'var(--border-glass)' }}>
-          <h3 className="text-[10px] font-extrabold uppercase tracking-widest mb-5 flex items-center gap-2" style={{ color: 'var(--text-muted)' }}>
-            <Sliders size={12} style={{ color: '#818CF8' }} /> Premium Lead CRM
-          </h3>
-          
-          {/* Compact visual Card */}
-          <div className="premium-card text-center rounded-[20px] p-5 mb-5">
-            <div
-              className="w-16 h-16 rounded-full mx-auto flex items-center justify-center text-xl font-bold uppercase select-none shadow-lg text-white"
-              style={{ background: 'linear-gradient(135deg, #818CF8, #22D3EE)' }}
-            >
-              {selectedConv.name.charAt(0)}
-            </div>
-            <p className="text-xs font-bold mt-3 text-white tracking-tight">{selectedConv.name}</p>
-            <p className="text-[10px] text-[#A0A0A0] font-light flex items-center justify-center gap-1 mt-1">
-              <Instagram size={10} className="text-[#C0C0C0]" /> @{selectedConv.username}
-            </p>
-          </div>
-
-          {/* AI Summarization Panel */}
-          <div className="rounded-[18px] p-4 mb-5" style={{ border: '1px solid rgba(129,140,248,0.15)', background: 'rgba(129,140,248,0.10)' }}>
-            <div className="flex justify-between items-center mb-2.5">
-              <span className="text-[10px] font-bold text-purple-300 flex items-center gap-1.5 uppercase tracking-wider">
-                <Sparkles size={11} className="text-purple-400" />
-                AI Conversation Summary
-              </span>
-              {aiSummary && (
-                <button
-                  onClick={handleGenerateSummary}
-                  className="text-[9px] text-gray-500 hover:text-white font-medium flex items-center gap-0.5 transition-colors"
-                >
-                  Regenerate
-                </button>
-              )}
-            </div>
-            {loadingSummary ? (
-              <div className="space-y-2 py-2 select-none">
-                <div className="h-2.5 bg-[rgba(255,255,255,0.04)] rounded animate-pulse w-full" />
-                <div className="h-2.5 bg-[rgba(255,255,255,0.04)] rounded animate-pulse w-5/6" />
-                <div className="h-2.5 bg-[rgba(255,255,255,0.04)] rounded animate-pulse w-2/3" />
-              </div>
-            ) : aiSummary ? (
-              <p className="text-[11px] text-[#D0D0D0] leading-relaxed italic font-light">
-                "{aiSummary}"
-              </p>
-            ) : (
-              <button
-                onClick={handleGenerateSummary}
-                className="w-full py-2 bg-purple-900/40 border border-purple-500/30 hover:border-purple-500/50 hover:bg-purple-900/60 rounded-lg text-[10px] font-medium text-purple-200 flex items-center justify-center gap-1.5 transition-all shadow-sm"
-              >
-                <Sparkles size={11} className="text-purple-300" />
-                Generate AI Summary
-              </button>
-            )}
-          </div>
-
-          {/* Lead Score Tactics Slider */}
-          <div className="premium-card mb-5 rounded-[18px] p-4">
-            <div className="flex justify-between text-[11px] mb-2.5 select-none font-semibold">
-              <span className="flex items-center gap-1.5" style={{ color: 'var(--text-muted)' }}>
-                <TrendingUp size={11} style={{ color: '#818CF8' }} /> Lead Score
-              </span>
-              <span className="text-white bg-white/5 border border-white/10 px-2 py-0.5 rounded text-[10px]">
-                {selectedConv.leadScore}/100
-              </span>
-            </div>
-            
-            {/* Range Slider for immediate scoring updates */}
-            <div className="flex items-center gap-3">
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={selectedConv.leadScore}
-                onChange={(e) => handleLeadScoreChange(Number(e.target.value))}
-                className="flex-1 h-1 rounded-full appearance-none cursor-pointer accent-[#818CF8] focus:outline-none"
-                style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid var(--border-glass)' }}
-              />
-            </div>
-          </div>
-
-          {/* Lead Notes Area (Debounced persistence) */}
-          <div className="premium-card mb-5 rounded-[18px] p-4">
-            <div className="text-[10px] font-bold uppercase tracking-wider mb-2.5 flex items-center gap-1.5" style={{ color: 'var(--text-muted)' }}>
-              <FileText size={11} /> Notes (Autosaved)
-            </div>
-            <textarea
-              rows={4}
-              value={selectedConv.notes}
-              onChange={(e) => handleNotesChange(e.target.value)}
-              onBlur={handleNotesBlur}
-              placeholder="Record lead interaction details here..."
-              className="w-full rounded-xl p-3 text-xs outline-none transition-all font-light leading-relaxed resize-none"
-              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-glass)', color: 'var(--text-primary)' }}
-              onFocus={e => (e.currentTarget.style.borderColor = 'var(--border-glow)')}
-              onBlur={e => (e.currentTarget.style.borderColor = 'var(--border-glass)')}
-            />
-          </div>
-
-          {/* Tags Manager (Instant persist) */}
-          <div className="premium-card rounded-[18px] p-4">
-            <div className="text-[10px] font-bold uppercase tracking-wider mb-3.5 flex items-center gap-1.5" style={{ color: 'var(--text-muted)' }}>
-              <Star size={11} style={{ color: '#818CF8' }} /> Tags Management
-            </div>
-            
-            {/* Tag Badges list */}
-            {selectedConv.tags && selectedConv.tags.length > 0 ? (
-              <div className="flex flex-wrap gap-1.5 mb-3.5">
-                {selectedConv.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-[9px] bg-black border border-[rgba(255,255,255,0.06)] hover:border-red-500/30 hover:bg-red-950/10 px-2.5 py-1 rounded-full flex items-center gap-1.5 text-gray-300 transition-all cursor-pointer group/tag"
-                    onClick={() => handleRemoveTag(tag)}
-                  >
-                    {tag}
-                    <X size={8} className="text-gray-500 group-hover/tag:text-red-500 transition-colors" />
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <p className="text-[10px] text-[#505050] italic font-light mb-3">No tags applied yet.</p>
-            )}
-
-            {/* Tag Composer Form */}
-            <form onSubmit={handleAddTag} className="flex gap-2">
-              <input
-                value={newTagInput}
-                onChange={(e) => setNewTagInput(e.target.value)}
-                placeholder="New tag..."
-                className="flex-1 bg-black/40 border border-[rgba(255,255,255,0.08)] rounded-lg px-2.5 py-1.5 text-[11px] placeholder-[#505050] focus:outline-none"
-              />
-              <button
-                type="submit"
-                className="p-1.5 bg-[#141414] hover:bg-[#1E1E24] border border-[rgba(255,255,255,0.08)] rounded-lg text-gray-400 hover:text-white transition-colors"
-              >
-                <Plus size={12} />
-              </button>
-            </form>
-          </div>
-        </div>
+        {selectedConv && (
+          <InboxCrmSidebar
+            selectedConv={selectedConv}
+            aiSummary={aiSummary}
+            loadingSummary={loadingSummary}
+            newTagInput={newTagInput}
+            onNewTagInputChange={setNewTagInput}
+            onGenerateSummary={handleGenerateSummary}
+            onNotesChange={handleNotesChange}
+            onNotesBlur={handleNotesBlur}
+            onAddTag={handleAddTag}
+            onRemoveTag={handleRemoveTag}
+            onLeadScoreChange={handleLeadScoreChange}
+          />
+        )}
       </div>
     </div>
   );

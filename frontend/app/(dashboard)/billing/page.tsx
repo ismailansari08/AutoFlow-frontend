@@ -6,6 +6,9 @@ import { Suspense } from 'react';
 import { CreditCard, Check, ShieldAlert, BarChart3, Loader2 } from 'lucide-react';
 import api from '@/lib/api/auth.api';
 import { useWorkspaceStore } from '@/lib/store/workspace.store';
+import { useBillingUsageQuery } from '@/lib/queries/useBillingUsageQuery';
+import { useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@/lib/queries/keys';
 
 interface UsageData {
   plan: string;
@@ -23,21 +26,17 @@ function BillingContent() {
   const role = workspaces.find((w) => w.id === workspaceId)?.role;
   const canUpgrade = role === 'owner' || role === 'admin';
 
-  const [usage, setUsage] = useState<UsageData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
+  const { data: usage, isLoading: loading, refetch } = useBillingUsageQuery();
   const [upgrading, setUpgrading] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
-  const loadUsage = () => {
-    api
-      .get('/billing/usage')
-      .then((res) => setUsage(res.data))
-      .catch(console.error)
-      .finally(() => setLoading(false));
+  const refreshUsage = () => {
+    void queryClient.invalidateQueries({ queryKey: queryKeys.billingUsage });
+    void refetch();
   };
 
   useEffect(() => {
-    loadUsage();
     const upgraded = searchParams.get('upgraded');
     const session = searchParams.get('session');
     if (upgraded && session && canUpgrade) {
@@ -45,7 +44,7 @@ function BillingContent() {
         .post('/billing/upgrade', { plan: upgraded, sessionId: session })
         .then(() => {
           setToast(`Upgraded to ${upgraded}!`);
-          loadUsage();
+          refreshUsage();
         })
         .catch(() => setToast('Upgrade failed'));
     }
@@ -62,7 +61,7 @@ function BillingContent() {
       const sessionId = checkout.data.sessionId as string;
       await api.post('/billing/upgrade', { plan: planKey, sessionId });
       setToast(`Plan updated to ${planKey}`);
-      loadUsage();
+      refreshUsage();
     } catch {
       setToast('Could not upgrade plan');
     } finally {

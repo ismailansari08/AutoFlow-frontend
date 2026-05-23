@@ -1,4 +1,10 @@
 import api from './auth.api';
+import type { Contact } from '@/lib/types/contact';
+
+export async function fetchContacts(): Promise<Contact[]> {
+  const { data } = await api.get<Contact[]>('/contacts');
+  return data ?? [];
+}
 
 export interface UpdateContactPayload {
   name?: string;

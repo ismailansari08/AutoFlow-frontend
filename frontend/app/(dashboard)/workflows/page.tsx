@@ -5,12 +5,21 @@ import { useSearchParams } from 'next/navigation';
 import { useWorkflows } from '@/lib/hooks/useWorkflows';
 import { WorkflowTemplatePicker } from '@/components/workflows/WorkflowTemplatePicker';
 import { WORKFLOW_TEMPLATES } from '@/lib/workflow-templates';
-import { 
-  Zap, 
-  Plus, 
-  Trash2, 
-  MessageSquare, 
-  Sparkles, 
+import {
+  type CanvasEdge,
+  type CanvasNode,
+  type CanvasNodeType,
+  configNumber,
+  configString,
+  configStringArray,
+  getBezierPath,
+} from '@/components/workflows/canvas-types';
+import {
+  Zap,
+  Plus,
+  Trash2,
+  MessageSquare,
+  Sparkles,
   CheckCircle,
   Sliders,
   X,
@@ -27,28 +36,8 @@ import {
   Database,
   Loader2,
   HelpCircle,
-  Activity
+  Activity,
 } from 'lucide-react';
-
-interface NodePosition {
-  x: number;
-  y: number;
-}
-
-interface CanvasNode {
-  id: string;
-  type: 'trigger' | 'ai' | 'delay' | 'condition' | 'action' | 'crm';
-  title: string;
-  description: string;
-  position: NodePosition;
-  config: any;
-}
-
-interface CanvasEdge {
-  id: string;
-  from: string;
-  to: string;
-}
 
 function WorkflowsPageContent() {
   const searchParams = useSearchParams();
@@ -192,10 +181,10 @@ function WorkflowsPageContent() {
     const triggerNode = updatedNodes.find(n => n.type === 'trigger');
     const actionNode = updatedNodes.find(n => n.type === 'action');
     
-    const triggerType = triggerNode?.config?.triggerType || 'comment';
-    const keywordsList = triggerNode?.config?.keywords || [];
+    const triggerType = configString(triggerNode?.config, 'triggerType', 'comment');
+    const keywordsList = configStringArray(triggerNode?.config, 'keywords');
     const triggerValue = keywordsList.join(', ');
-    const actionMessage = actionNode?.config?.dmMessage || '';
+    const actionMessage = configString(actionNode?.config, 'dmMessage');
 
     try {
       await updateWorkflow(selectedWorkflowId, {
@@ -326,11 +315,11 @@ function WorkflowsPageContent() {
   };
 
   // Inject new Node from Palette
-  const addNodeFromPalette = (type: CanvasNode['type']) => {
+  const addNodeFromPalette = (type: CanvasNodeType) => {
     if (!selectedWorkflowId) return;
 
     // Node template mappings
-    const nodeTemplates: Record<CanvasNode['type'], Partial<CanvasNode>> = {
+    const nodeTemplates: Record<CanvasNodeType, Partial<CanvasNode>> = {
       trigger: {
         title: 'Keyword Trigger',
         description: 'Initiate when matching text is comments/DMs',
@@ -502,24 +491,6 @@ function WorkflowsPageContent() {
     setSimulationActiveNodeId(null);
     setSimulatedCompletedNodeIds([]);
     setSimulationFlowEdgeId(null);
-  };
-
-  // Generate smooth SVG Bezier paths between sockets
-  const getBezierPath = (x1: number, y1: number, x2: number, y2: number) => {
-    const dx = Math.abs(x2 - x1) * 0.5;
-    return `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
-  };
-
-  // Pre-calculate path nodes positions
-  const getPortCoordinates = (nodeId: string, portType: 'in' | 'out') => {
-    const node = nodes.find(n => n.id === nodeId);
-    if (!node) return { x: 0, y: 0 };
-    
-    if (portType === 'out') {
-      return { x: node.position.x + 280, y: node.position.y + 60 };
-    } else {
-      return { x: node.position.x, y: node.position.y + 60 };
-    }
   };
 
   return (
@@ -973,7 +944,7 @@ function WorkflowsPageContent() {
                                   Evaluation Target
                                 </label>
                                 <select
-                                  value={node.config?.triggerType || 'comment'}
+                                  value={configString(node.config, 'triggerType', 'comment')}
                                   onChange={(e) => {
                                     updateNodeConfig(node.id, { triggerType: e.target.value });
                                     saveWorkflowCanvas(nodes, edges);
@@ -985,14 +956,14 @@ function WorkflowsPageContent() {
                                   <option value="follow">Instagram Follower</option>
                                 </select>
                               </div>
-                              {node.config?.triggerType !== 'follow' && (
+                              {configString(node.config, 'triggerType', 'comment') !== 'follow' && (
                                 <div>
                                   <label className="text-[8px] font-extrabold uppercase tracking-wider text-gray-500 block mb-1">
                                     Keyword Filters
                                   </label>
                                   <input
                                     type="text"
-                                    value={(node.config?.keywords || []).join(', ')}
+                                    value={configStringArray(node.config, 'keywords').join(', ')}
                                     onChange={(e) => {
                                       const keywords = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
                                       updateNodeConfig(node.id, { keywords });
@@ -1015,7 +986,7 @@ function WorkflowsPageContent() {
                                 </label>
                                 <textarea
                                   rows={2}
-                                  value={node.config?.customPrompt || ''}
+                                  value={configString(node.config, 'customPrompt')}
                                   onChange={(e) => updateNodeConfig(node.id, { customPrompt: e.target.value })}
                                   onBlur={() => saveWorkflowCanvas(nodes, edges)}
                                   placeholder="Guide the AI reply logic..."
@@ -1028,7 +999,7 @@ function WorkflowsPageContent() {
                                     Tone type
                                   </label>
                                   <select
-                                    value={node.config?.customTone || 'Friendly'}
+                                    value={configString(node.config, 'customTone', 'Friendly')}
                                     onChange={(e) => {
                                       updateNodeConfig(node.id, { customTone: e.target.value });
                                       saveWorkflowCanvas(nodes, edges);
@@ -1052,7 +1023,7 @@ function WorkflowsPageContent() {
                               </label>
                               <input
                                 type="number"
-                                value={node.config?.delaySeconds || 5}
+                                value={configNumber(node.config, 'delaySeconds', 5)}
                                 onChange={(e) => updateNodeConfig(node.id, { delaySeconds: Number(e.target.value) })}
                                 onBlur={() => saveWorkflowCanvas(nodes, edges)}
                                 className="w-full bg-black border border-[rgba(255,255,255,0.08)] rounded-lg p-1.5 text-[10px] text-white focus:outline-none"
@@ -1071,14 +1042,14 @@ function WorkflowsPageContent() {
                                   type="range"
                                   min="0"
                                   max="100"
-                                  value={node.config?.leadScoreThreshold || 50}
+                                  value={configNumber(node.config, 'leadScoreThreshold', 50)}
                                   onChange={(e) => updateNodeConfig(node.id, { leadScoreThreshold: Number(e.target.value) })}
                                   onMouseUp={() => saveWorkflowCanvas(nodes, edges)}
                                   className="flex-1 h-1 rounded-full accent-[#818CF8]"
                                   style={{ background: 'rgba(255,255,255,0.06)' }}
                                 />
                                 <span className="text-[9px] font-bold text-gray-300 font-mono">
-                                  {node.config?.leadScoreThreshold || 50}
+                                  {configNumber(node.config, 'leadScoreThreshold', 50)}
                                 </span>
                               </div>
                             </div>
@@ -1092,7 +1063,7 @@ function WorkflowsPageContent() {
                               </label>
                               <textarea
                                 rows={2}
-                                value={node.config?.dmMessage || ''}
+                                value={configString(node.config, 'dmMessage')}
                                 onChange={(e) => updateNodeConfig(node.id, { dmMessage: e.target.value })}
                                 onBlur={() => saveWorkflowCanvas(nodes, edges)}
                                 placeholder="DM content payload..."
@@ -1110,7 +1081,7 @@ function WorkflowsPageContent() {
                                 </label>
                                 <input
                                   type="text"
-                                  value={(node.config?.appendTags || []).join(', ')}
+                                  value={configStringArray(node.config, 'appendTags').join(', ')}
                                   onChange={(e) => {
                                     const tags = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
                                     updateNodeConfig(node.id, { appendTags: tags });
@@ -1126,7 +1097,7 @@ function WorkflowsPageContent() {
                                 </label>
                                 <input
                                   type="number"
-                                  value={node.config?.incrementScore || 10}
+                                  value={configNumber(node.config, 'incrementScore', 10)}
                                   onChange={(e) => updateNodeConfig(node.id, { incrementScore: Number(e.target.value) })}
                                   onBlur={() => saveWorkflowCanvas(nodes, edges)}
                                   className="w-full bg-black border border-[rgba(255,255,255,0.08)] rounded-lg p-1.5 text-[10px] text-white focus:outline-none"

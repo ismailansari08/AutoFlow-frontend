@@ -1,8 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 @import '../styles/tokens.css';
+
+/* Glass form fields — replaces inline onFocus/onBlur border hacks */
+.glass-field {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-glass);
+  color: var(--text-primary);
+}
+.glass-field::placeholder {
+  color: var(--text-muted);
+}
+.glass-field:focus {
+  border-color: var(--border-glow);
+  outline: none;
+}
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -16,7 +29,7 @@ html {
 body {
   background-color: var(--af-bg-base);
   color: var(--af-text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, 'Inter',
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont,
     'SF Pro Display', 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
