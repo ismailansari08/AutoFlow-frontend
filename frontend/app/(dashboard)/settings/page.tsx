@@ -39,8 +39,9 @@ export default function SettingsPage() {
   }, []);
 
   const handleSave = async () => {
+    const snapshot = { ...settings };
     setSaveLoading(true);
-    setMessage(null);
+    setMessage({ type: 'success', text: 'Saving…' });
     try {
       await api.post('/settings', {
         aiTone: settings.aiTone,
@@ -48,6 +49,7 @@ export default function SettingsPage() {
       });
       setMessage({ type: 'success', text: 'Settings saved successfully!' });
     } catch (e) {
+      setSettings(snapshot);
       setMessage({ type: 'error', text: 'Failed to save settings. Please try again.' });
       console.error(e);
     } finally {
@@ -57,12 +59,13 @@ export default function SettingsPage() {
 
   const handleConnectInsta = async () => {
     try {
-      const response = await api.post('/settings/instagram/connect');
-      if (response.data?.username) {
+      const response = await api.post('/settings/instagram/connect', {});
+      const username = response.data?.instaUsername ?? response.data?.username;
+      if (username || response.data?.instaConnected) {
         setSettings(prev => ({
           ...prev,
           instaConnected: true,
-          instaUsername: response.data.username,
+          instaUsername: username ?? 'mock_business',
         }));
         setMessage({ type: 'success', text: 'Successfully connected Instagram account!' });
       }
