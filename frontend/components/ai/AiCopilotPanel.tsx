@@ -36,7 +36,7 @@ export function AiCopilotPanel() {
     if (open && messages.length === 0) {
       generateRecommendations();
     }
-  }, [open]);
+  }, [open, generateRecommendations, messages.length]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -128,7 +128,7 @@ export function AiCopilotPanel() {
                   </div>
                   <div className="bg-white/5 border border-white/8 rounded-xl rounded-tl-sm px-3 py-2.5 max-w-[280px]">
                     <p className="text-sm text-white/80 leading-relaxed">
-                      Hey! 👋 I'm your AI copilot. Tell me what to automate and I'll build the workflow for you.
+                      Hey! 👋 I&apos;m your AI copilot. Tell me what to automate and I&apos;ll build the workflow for you.
                     </p>
                   </div>
                 </div>

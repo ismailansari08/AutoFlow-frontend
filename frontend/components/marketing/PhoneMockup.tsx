@@ -95,7 +95,7 @@ export default function PhoneMockup() {
                   @rahul.cooks commented
                 </span>
                 <span className="text-[11px] font-medium leading-none text-black">
-                  "PRICE" on your Reel
+                  &quot;PRICE&quot; on your Reel
                 </span>
               </div>
               <div className="ml-auto w-1.5 h-1.5 bg-blue-500 rounded-full animate-ping" />

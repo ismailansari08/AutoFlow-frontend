@@ -48,7 +48,7 @@ function BillingContent() {
         })
         .catch(() => setToast('Upgrade failed'));
     }
-  }, [searchParams, canUpgrade]);
+  }, [searchParams, canUpgrade, refreshUsage]);
 
   const currentPlan = usage?.plan ?? 'FREE';
 

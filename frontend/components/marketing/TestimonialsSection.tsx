@@ -89,7 +89,7 @@ export default function TestimonialsSection() {
             >
               {/* Review Text */}
               <p className="text-[#D0D0D0] text-[15px] leading-relaxed mb-6 font-normal">
-                "{t.text}"
+                &quot;{t.text}&quot;
               </p>
               
               {/* Reviewer Details */}

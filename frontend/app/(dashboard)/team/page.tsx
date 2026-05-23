@@ -56,7 +56,7 @@ export default function TeamPage() {
 
   useEffect(() => {
     load();
-  }, [canManage]);
+  }, [canManage, load]);
 
   const sendInvite = async () => {
     const res = await api.post('/workspaces/invites', { email, role });

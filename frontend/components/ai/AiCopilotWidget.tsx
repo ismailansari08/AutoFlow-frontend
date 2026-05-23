@@ -50,7 +50,7 @@ export function AiCopilotDashboardWidget() {
     }, 6000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [generateRecommendations]);
 
   const quickActions = [
     { label: 'Auto-DM "price"', prompt: 'Create a workflow to DM people who comment "price"' },
