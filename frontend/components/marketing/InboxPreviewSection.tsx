@@ -5,9 +5,9 @@ import { ScrollReveal } from './ScrollReveal';
 import { Instagram, Sparkles } from 'lucide-react';
 
 const messages = [
-  { dir: 'in', text: 'Price kitna hai bhai?' },
-  { dir: 'out', text: 'Hi! Growth plan ₹999/month — DM me details bhej diye 🙏', ai: true },
-  { dir: 'in', text: 'Perfect, received!' },
+  { dir: 'in', text: 'Can you send pricing details?' },
+  { dir: 'out', text: 'Absolutely. I have shared the Growth plan details and next steps in this thread.', ai: true },
+  { dir: 'in', text: 'Perfect, received.' },
 ];
 
 export default function InboxPreviewSection() {
@@ -17,8 +17,8 @@ export default function InboxPreviewSection() {
         <SectionHeader
           light
           label="Unified inbox"
-          title="Discord speed. Intercom clarity. AI built in."
-          subtitle="Every Instagram DM in one command center — realtime, tagged, and sales-ready."
+          title="One place for fast replies, ownership, and follow-up"
+          subtitle="Keep Instagram conversations organized with AI guidance, team visibility, and cleaner response workflows."
         />
       </ScrollReveal>
 
@@ -53,25 +53,25 @@ export default function InboxPreviewSection() {
                 </p>
               </div>
               <span className="ml-auto text-[10px] flex items-center gap-1 text-violet-600 font-medium">
-                <Sparkles size={10} /> AI on
+                <Sparkles size={10} /> AI active
               </span>
             </div>
             <div className="flex-1 space-y-2">
-              {messages.map((m, i) => (
+              {messages.map((message, i) => (
                 <div
                   key={i}
-                  className={`flex ${m.dir === 'in' ? 'justify-start' : 'justify-end'}`}
+                  className={`flex ${message.dir === 'in' ? 'justify-start' : 'justify-end'}`}
                 >
                   <div
-                    className={`max-w-[85%] px-3 py-2 rounded-2xl text-xs ${
-                      m.dir === 'in'
+                    className={`max-w-[85%] px-3 py-2 rounded-2xl text-xs leading-relaxed ${
+                      message.dir === 'in'
                         ? 'bg-slate-100 text-slate-800'
                         : 'bg-slate-900 text-white'
                     }`}
                   >
-                    {m.text}
-                    {m.ai && (
-                      <span className="block text-[9px] text-violet-300 mt-1">AI reply</span>
+                    {message.text}
+                    {message.ai && (
+                      <span className="block text-[9px] text-violet-300 mt-1">AI-assisted reply</span>
                     )}
                   </div>
                 </div>

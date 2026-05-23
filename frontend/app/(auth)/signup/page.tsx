@@ -50,7 +50,7 @@ export default function SignupPage() {
             <span className="font-bold text-2xl tracking-tight">AutoFlow</span>
           </Link>
           <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-            Start Instagram automation — completely free
+            Start Instagram automation - completely free
           </p>
         </div>
 
@@ -99,7 +99,7 @@ export default function SignupPage() {
                 boxShadow: isLoading ? 'none' : '0 0 24px rgba(192,132,252,0.35)',
               }}
             >
-              {isLoading ? 'Creating account…' : 'Start Free Trial →'}
+              {isLoading ? 'Creating account...' : 'Start Free Trial ->'}
             </button>
           </form>
 
@@ -126,7 +126,7 @@ export default function SignupPage() {
           ))}
         </div>
         <p className="text-center text-[10px] mt-4" style={{ color: 'var(--text-muted)' }}>
-          No credit card required · Cancel anytime
+          No credit card required • Cancel anytime
         </p>
       </div>
     </div>

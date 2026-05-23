@@ -22,8 +22,8 @@ api.interceptors.request.use((config) => {
 
 let refreshPromise: Promise<string | null> | null = null;
 
-async function refreshAccessToken(): Promise<string | null> {
-  const refreshToken = localStorage.getItem('refreshToken');
+export async function refreshAccessToken(explicitRefreshToken?: string): Promise<string | null> {
+  const refreshToken = explicitRefreshToken || localStorage.getItem('refreshToken');
   if (!refreshToken) return null;
 
   const baseUrl = (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/$/, '');

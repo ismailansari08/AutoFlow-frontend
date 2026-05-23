@@ -12,7 +12,6 @@ function getAuthHeader() {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-// Simulate token streaming for AI text
 async function streamText(
   text: string,
   onChunk: (partial: string) => void,
@@ -44,7 +43,6 @@ export function useAiCopilot() {
       store.setThinking(true);
 
       const assistantId = crypto.randomUUID();
-      // Check if this is a workflow generation request
       const isWorkflowRequest =
         /create|build|make|generate|set up|automate|workflow|flow|when|if someone/i.test(
           userText,
@@ -82,7 +80,7 @@ export function useAiCopilot() {
         } catch {
           store.setThinking(false);
           const fallback =
-            "I've drafted a workflow based on your request. You can open the Workflows page to see it on the canvas.";
+            'I prepared a workflow draft based on your request. Open the workflow canvas to review and refine it.';
           store.addMessage({
             id: assistantId,
             role: 'assistant',
@@ -95,12 +93,10 @@ export function useAiCopilot() {
             (partial) => store.updateLastMessage(partial, false),
             () => store.updateLastMessage(fallback, true),
           );
-          // Build a local draft
           store.setDraftWorkflow(buildLocalDraft(userText));
           store.setMode('workflow-draft');
         }
       } else {
-        // General copilot chat
         store.setThinking(false);
         const reply = getLocalReply(userText);
         store.addMessage({
@@ -130,10 +126,10 @@ export function useAiCopilot() {
       store.setRecommendations(resp.data.recommendations || []);
     } catch {
       store.setRecommendations([
-        '💡 Add a delay node after your trigger to avoid message spam.',
-        '⚡ Use keyword triggers for high-intent comments like "price" or "buy".',
-        '🎯 Segment contacts by lead score before sending DMs.',
-        '📊 Connect analytics to measure workflow conversion rates.',
+        'Add a short delay after trigger events when you need a less aggressive follow-up cadence.',
+        'Use keyword triggers for high-intent comments like "price", "link", or "details".',
+        'Segment contacts by lead quality before sending outbound follow-ups.',
+        'Review workflow analytics weekly to spot conversion drop-offs early.',
       ]);
     }
   }, [store]);
@@ -148,14 +144,14 @@ export function useAiCopilot() {
 function getLocalReply(input: string): string {
   const lower = input.toLowerCase();
   if (lower.includes('hello') || lower.includes('hi'))
-    return "Hey! 👋 I'm your AutoFlow AI copilot. Ask me to create workflows, optimize automations, or suggest reply tones for your inbox.";
+    return "Hello. I am FLOWAI. Ask me to build workflows, review automations, or suggest better reply strategies for your inbox.";
   if (lower.includes('help'))
-    return 'I can help you: create workflows from plain English, suggest smart replies, analyze conversation tone, and optimize your automations. Just tell me what you need!';
+    return 'I can help create workflows from plain English, suggest reply logic, analyze conversation tone, and improve automation performance.';
   if (lower.includes('analytic') || lower.includes('performance'))
-    return '📊 Your top workflow has a 94% success rate. Consider adding a fallback branch for failed DMs to recover lost leads.';
+    return 'Your strongest workflow is performing well. Consider adding a fallback branch for missed deliveries so fewer leads slip through.';
   if (lower.includes('tone') || lower.includes('reply'))
-    return '🎯 For sales conversations, a warm and urgent tone converts best. Try: "Hey! Just saw your comment 👀 — our offer expires tonight. Want details?"';
-  return "I'm analyzing your workspace... 🧠 You have 3 workflows running. Your inbox response rate is strong. Want me to suggest an optimization?";
+    return 'For sales conversations, concise and warm replies usually perform best. I can help draft a version tailored to your audience and offer.';
+  return 'I am reviewing your workspace activity. You have active workflows running and your response coverage looks healthy. Would you like an optimization suggestion next?';
 }
 
 function buildLocalDraft(prompt: string): WorkflowDraft {

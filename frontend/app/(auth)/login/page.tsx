@@ -91,7 +91,7 @@ export default function LoginPage() {
                 boxShadow: isLoading ? 'none' : '0 0 24px rgba(192,132,252,0.35)',
               }}
             >
-              {isLoading ? 'Signing in…' : 'Sign In →'}
+              {isLoading ? 'Signing in...' : 'Sign In ->'}
             </button>
           </form>
 
@@ -104,7 +104,7 @@ export default function LoginPage() {
         </div>
 
         <p className="text-center text-[10px] mt-4" style={{ color: 'var(--text-muted)' }}>
-          Secured · Meta-approved · No spam
+          Secured • Meta-approved • No spam
         </p>
       </div>
     </div>

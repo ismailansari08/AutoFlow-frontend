@@ -1,13 +1,14 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { inter } from './fonts';
+import { Providers } from './providers';
 
 export const metadata: Metadata = {
   title: {
     default: 'AutoFlow',
     template: '%s · AutoFlow',
   },
-  description: 'Instagram Automation SaaS — comment-to-DM, AI inbox, workflows',
+  description: 'Instagram Automation SaaS - comment-to-DM, AI inbox, workflows',
   metadataBase: process.env.NEXT_PUBLIC_APP_URL
     ? new URL(process.env.NEXT_PUBLIC_APP_URL)
     : undefined,
@@ -20,8 +21,6 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
   themeColor: '#050508',
 };
-
-import { Providers } from './providers';
 
 export default function RootLayout({
   children,
@@ -36,4 +35,3 @@ export default function RootLayout({
     </html>
   );
 }
-

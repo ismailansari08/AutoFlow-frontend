@@ -41,7 +41,7 @@ export function MobileFAB() {
     },
     {
       id: 'ai',
-      label: 'AI Copilot',
+      label: 'FLOWAI',
       icon: Sparkles,
       onClick: () => {
         setCopilotOpen(true);

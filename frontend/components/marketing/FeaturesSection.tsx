@@ -1,49 +1,57 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import {
+  Bot,
+  ChartColumn,
+  MessageSquareText,
+  ShieldCheck,
+  Sparkles,
+  Workflow,
+} from 'lucide-react';
 import { MarketingSection, SectionHeader } from './MarketingSection';
 
 const features = [
   {
-    icon: '💬',
-    title: 'Comment-to-DM',
-    desc: 'Any keyword comment triggers an instant DM. Works on Reels, posts, and Stories.',
+    icon: MessageSquareText,
+    title: 'Comment-triggered outreach',
+    desc: 'Turn high-intent comments into direct conversations the moment they happen.',
   },
   {
-    icon: '🤖',
-    title: 'AI Auto-Reply',
-    desc: 'AI detects sales vs support intent and sends smart, contextual replies automatically.',
+    icon: Bot,
+    title: 'AI response orchestration',
+    desc: 'Route inquiries by intent and send replies that stay consistent with your brand.',
   },
   {
-    icon: '📥',
-    title: 'Unified Inbox',
-    desc: 'All DMs in one place. Real-time updates. Manage conversations with your team.',
+    icon: Sparkles,
+    title: 'Unified team inbox',
+    desc: 'Review every DM, hand off conversations, and keep follow-ups moving in one place.',
   },
   {
-    icon: '📊',
-    title: 'Analytics',
-    desc: 'Track delivery rate, open rate, and conversions — all in one dashboard.',
+    icon: ChartColumn,
+    title: 'Conversion visibility',
+    desc: 'Track delivery, response, and funnel performance without exporting spreadsheets.',
   },
   {
-    icon: '🔒',
-    title: 'Meta-Approved',
-    desc: 'Uses official Instagram Graph API. No ban risk. 100% policy compliant.',
+    icon: ShieldCheck,
+    title: 'Official platform compliance',
+    desc: 'Built on the Instagram Graph API with security and policy requirements in mind.',
   },
   {
-    icon: '⚡',
-    title: 'Workflow Builder',
-    desc: 'Build complex automations with delays, conditions, and AI nodes visually.',
+    icon: Workflow,
+    title: 'Visual workflow control',
+    desc: 'Design triggers, conditions, and actions with logic your team can audit at a glance.',
   },
 ];
 
 export default function FeaturesSection() {
   return (
-    <MarketingSection id="features" variant="light">
+    <MarketingSection id="features" variant="light" className="bg-slate-50">
       <SectionHeader
         light
-        label="Features"
-        title="Everything you need to scale"
-        subtitle="One platform for capture, conversation, and conversion."
+        label="Platform capabilities"
+        title="Professional tools for capture, response, and conversion"
+        subtitle="Everything your team needs to run Instagram engagement with more speed and less manual work."
       />
 
       <motion.div
@@ -59,7 +67,7 @@ export default function FeaturesSection() {
           },
         }}
       >
-        {features.map((feature) => (
+        {features.map((feature, index) => (
           <motion.div
             key={feature.title}
             variants={{
@@ -71,12 +79,23 @@ export default function FeaturesSection() {
               },
             }}
             whileHover={{ y: -4 }}
-            className="group bg-white border border-slate-200 rounded-2xl p-8 hover:border-violet-200 hover:shadow-lg hover:shadow-violet-100/50 transition-all duration-200 cursor-default"
+            className="group marketing-light-card p-8 transition-all duration-200 hover:border-violet-200 hover:shadow-lg hover:shadow-violet-100/60 cursor-default"
           >
-            <div className="text-2xl mb-4 transition-transform duration-200 group-hover:scale-110">
-              {feature.icon}
-            </div>
-            <h3 className="text-slate-900 font-semibold text-lg mb-2.5">{feature.title}</h3>
+            <motion.div
+              className="mb-5 inline-flex rounded-2xl border border-violet-100 bg-gradient-to-br from-violet-50 to-cyan-50 p-3.5 text-violet-600 animate-icon-float animate-icon-glow"
+              animate={{
+                rotate: [0, 2, 0, -2, 0],
+                scale: [1, 1.02, 1],
+              }}
+              transition={{
+                duration: 4 + index * 0.2,
+                repeat: Infinity,
+                ease: 'easeInOut',
+              }}
+            >
+              <feature.icon className="h-5 w-5" />
+            </motion.div>
+            <h3 className="text-slate-900 font-semibold text-lg mb-2.5 tracking-tight">{feature.title}</h3>
             <p className="text-slate-600 text-sm leading-relaxed group-hover:text-slate-800">
               {feature.desc}
             </p>

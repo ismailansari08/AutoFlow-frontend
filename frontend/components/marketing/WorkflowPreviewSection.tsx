@@ -5,9 +5,9 @@ import { MarketingSection, SectionHeader } from './MarketingSection';
 import { ScrollReveal } from './ScrollReveal';
 
 const nodes = [
-  { id: 't', label: 'Comment: PRICE', type: 'trigger', x: '8%' },
-  { id: 'c', label: 'Intent: Sales', type: 'condition', x: '38%' },
-  { id: 'a', label: 'Send DM + Tag', type: 'action', x: '68%' },
+  { id: 't', label: 'Comment trigger', detail: 'Keyword: PRICE', type: 'trigger' },
+  { id: 'c', label: 'Intent check', detail: 'Sales interest detected', type: 'condition' },
+  { id: 'a', label: 'Follow-up action', detail: 'Send DM and assign tag', type: 'action' },
 ];
 
 export default function WorkflowPreviewSection() {
@@ -16,8 +16,8 @@ export default function WorkflowPreviewSection() {
       <ScrollReveal>
         <SectionHeader
           label="Workflow builder"
-          title="Build automations on a living canvas"
-          subtitle="Drag triggers, AI nodes, and actions — then watch execution glow in real time."
+          title="Design automations your team can understand instantly"
+          subtitle="Map triggers, AI decisions, and follow-up actions on a visual canvas that stays easy to audit."
         />
       </ScrollReveal>
 
@@ -65,10 +65,10 @@ export default function WorkflowPreviewSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 + i * 0.15 }}
                 viewport={{ once: true }}
-                className="relative z-10 w-[28%] max-w-[160px]"
+                className="relative z-10 w-[28%] max-w-[180px]"
               >
                 <div
-                  className={`rounded-xl p-4 border text-center ${
+                  className={`rounded-2xl p-4 border text-center ${
                     node.type === 'trigger'
                       ? 'border-blue-500/40 bg-blue-500/10 shadow-[0_0_24px_rgba(59,130,246,0.2)]'
                       : node.type === 'condition'
@@ -76,10 +76,11 @@ export default function WorkflowPreviewSection() {
                         : 'border-emerald-500/40 bg-emerald-500/10 shadow-[0_0_24px_rgba(16,185,129,0.15)]'
                   }`}
                 >
-                  <p className="text-[10px] uppercase tracking-wider text-slate-500 mb-1">
+                  <p className="text-[10px] uppercase tracking-wider text-slate-400 mb-1">
                     {node.type}
                   </p>
-                  <p className="text-xs font-semibold text-white">{node.label}</p>
+                  <p className="text-sm font-semibold text-white tracking-tight">{node.label}</p>
+                  <p className="text-[11px] text-slate-300 mt-2 leading-relaxed">{node.detail}</p>
                 </div>
               </motion.div>
             ))}

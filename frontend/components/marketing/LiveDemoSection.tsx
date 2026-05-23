@@ -18,7 +18,7 @@ export default function LiveDemoSection() {
         <SectionHeader
           label="Live product"
           title="See AutoFlow run in real time"
-          subtitle="Comment triggers fire instantly. AI replies, inbox updates, and analytics — all in one OS."
+          subtitle="Comment triggers fire instantly. AI replies, inbox updates, and analytics - all in one OS."
         />
       </ScrollReveal>
 
@@ -51,7 +51,7 @@ export default function LiveDemoSection() {
               >
                 <stat.icon className="w-5 h-5 text-violet-400 mx-auto mb-2" />
                 <div className="text-2xl font-bold text-white tabular-nums">{stat.value}</div>
-                <div className="text-xs text-slate-500 mt-1">{stat.label}</div>
+                <div className="text-xs text-slate-400 mt-1">{stat.label}</div>
               </motion.div>
             ))}
           </div>
@@ -63,8 +63,8 @@ export default function LiveDemoSection() {
                   <Play className="w-4 h-4 text-violet-300" />
                 </div>
                 <div>
-                  <p className="font-medium text-white">Workflow: Comment “PRICE” → DM</p>
-                  <p className="text-xs text-slate-500">Executed 12s ago • 98% delivery</p>
+                  <p className="font-medium text-white">Workflow: Comment &quot;PRICE&quot; -&gt; DM</p>
+                  <p className="text-xs text-slate-400">Executed 12s ago • 98% delivery</p>
                 </div>
               </div>
               <div className="flex gap-2 text-[10px]">

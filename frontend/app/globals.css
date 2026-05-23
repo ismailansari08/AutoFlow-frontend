@@ -219,6 +219,79 @@ body {
   animation: text-letter-spacing 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+@keyframes icon-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes icon-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 rgba(129, 140, 248, 0);
+  }
+  50% {
+    box-shadow: 0 10px 24px rgba(129, 140, 248, 0.18);
+  }
+}
+
+.animate-icon-float {
+  animation: icon-float 3.6s ease-in-out infinite;
+}
+
+.animate-icon-glow {
+  animation: icon-glow 3.6s ease-in-out infinite;
+}
+
+.marketing-light-card {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 1rem;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+}
+
+.marketing-dark-card {
+  background: rgba(11, 11, 20, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+@keyframes dashboard-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes dashboard-glow-soft {
+  0%, 100% {
+    box-shadow: 0 0 0 rgba(129, 140, 248, 0);
+  }
+  50% {
+    box-shadow: 0 8px 22px rgba(129, 140, 248, 0.14);
+  }
+}
+
+.dashboard-icon-soft {
+  animation: dashboard-float 4s ease-in-out infinite, dashboard-glow-soft 4s ease-in-out infinite;
+}
+
+.dashboard-surface-hover {
+  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+}
+
+.dashboard-surface-hover:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-glow);
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.12);
+}
+
 /* Custom styles for elements to match CreatorFlow exact specs */
 .trust-badge {
   display: inline-flex;

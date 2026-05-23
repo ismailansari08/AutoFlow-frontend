@@ -9,18 +9,18 @@ import { MagneticButton } from './MagneticButton';
 const capabilities = [
   {
     icon: Brain,
-    title: 'Intent detection',
-    desc: 'Sales, support, or spam — AI routes every DM intelligently.',
+    title: 'Intent-aware routing',
+    desc: 'Separate sales questions, support requests, and low-value noise before a human has to step in.',
   },
   {
     icon: Wand2,
-    title: 'Custom personality',
-    desc: 'Tone and rules per workspace. Hindi-English mix that sounds human.',
+    title: 'Brand-safe response rules',
+    desc: 'Define tone, escalation paths, and approved messaging for every workspace and campaign.',
   },
   {
     icon: Sparkles,
-    title: 'FAQ intercept',
-    desc: 'Instant answers before OpenAI — faster, cheaper, on-brand.',
+    title: 'Fast answer coverage',
+    desc: 'Handle repeat questions instantly, reduce manual load, and keep replies aligned with your offers.',
   },
 ];
 
@@ -42,26 +42,32 @@ export default function AIAutomationSection() {
 
       <ScrollReveal>
         <SectionHeader
-          label="AI native"
-          title="AI that feels alive inside your inbox"
-          subtitle="Not a chatbot bolt-on — intelligence woven through every automation."
+          label="AI operations layer"
+          title="Automation logic that works like a real teammate"
+          subtitle="Guide replies, reduce repetitive handling, and keep your inbox moving with more consistency."
         />
       </ScrollReveal>
 
       <div className="grid md:grid-cols-3 gap-6 mb-12">
         {capabilities.map((item, i) => (
           <ScrollReveal key={item.title} delay={i * 0.08}>
-            <div className="af-glass af-glow-border rounded-2xl p-6 h-full hover:border-violet-500/40 transition-colors">
-              <item.icon className="w-8 h-8 text-violet-400 mb-4" />
-              <h3 className="font-semibold text-white mb-2">{item.title}</h3>
-              <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
-            </div>
+            <motion.div
+              className="marketing-dark-card p-6 h-full hover:border-violet-500/40 transition-colors"
+              animate={{ y: [0, -3, 0] }}
+              transition={{ duration: 3.8 + i * 0.25, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              <div className="mb-4 inline-flex rounded-2xl border border-violet-500/20 bg-violet-500/10 p-3 text-violet-300 animate-icon-glow">
+                <item.icon className="w-6 h-6" />
+              </div>
+              <h3 className="font-semibold text-white mb-2 tracking-tight">{item.title}</h3>
+              <p className="text-sm text-slate-300 leading-relaxed">{item.desc}</p>
+            </motion.div>
           </ScrollReveal>
         ))}
       </div>
 
       <ScrollReveal delay={0.2} className="text-center">
-        <MagneticButton href="/signup">Start with AI automation →</MagneticButton>
+        <MagneticButton href="/signup">Launch AI workflows -&gt;</MagneticButton>
       </ScrollReveal>
     </MarketingSection>
   );

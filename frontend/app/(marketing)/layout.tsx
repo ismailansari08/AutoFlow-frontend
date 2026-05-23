@@ -5,7 +5,7 @@ export const metadata: Metadata = {
     template: '%s · AutoFlow',
     default: 'AutoFlow',
   },
-  description: 'Instagram automation for Indian creators — comment-to-DM, AI inbox, workflows.',
+  description: 'Instagram automation for Indian creators - comment-to-DM, AI inbox, workflows.',
 };
 
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {

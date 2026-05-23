@@ -23,8 +23,6 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-[1100px] w-full mx-auto px-6 flex items-center justify-between">
-        
-        {/* Brand Logo with Premium SVG Glyph */}
         <Link href="/" className="flex items-center gap-2.5 select-none group">
           <div className="w-7 h-7 rounded-lg bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] flex items-center justify-center text-white transition-all duration-300 group-hover:bg-white group-hover:text-black select-none">
             <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -38,7 +36,6 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Desktop Navigation Links */}
         <div className="hidden md:flex items-center gap-8 select-none">
           {[
             ['Demo', '#demo'],
@@ -49,18 +46,17 @@ export default function Navbar() {
             <a
               key={label}
               href={href}
-              className="text-[#A0A0A0] hover:text-white text-[13px] font-medium transition-all duration-150 relative py-1 hover:translate-y-[-1px]"
+              className="text-[#C3C3D1] hover:text-white text-[13px] font-medium transition-all duration-150 relative py-1 hover:translate-y-[-1px]"
             >
               {label}
             </a>
           ))}
         </div>
 
-        {/* Desktop CTA Action Panel */}
         <div className="hidden md:flex items-center gap-6 select-none">
           <Link
             href="/login"
-            className="text-[#A0A0A0] hover:text-white text-[13px] font-medium transition-all duration-150 hover:translate-y-[-1px]"
+            className="text-[#C3C3D1] hover:text-white text-[13px] font-medium transition-all duration-150 hover:translate-y-[-1px]"
           >
             Login
           </Link>
@@ -72,20 +68,18 @@ export default function Navbar() {
               boxShadow: '0 0 20px rgba(129,140,248,0.35)',
             }}
           >
-            Start Free <span>→</span>
+            Start Free <span>-&gt;</span>
           </Link>
         </div>
 
-        {/* Mobile Navigation Trigger Button */}
         <button
-          className="md:hidden text-[#A0A0A0] hover:text-white transition-colors duration-150"
+          className="md:hidden text-[#C3C3D1] hover:text-white transition-colors duration-150"
           onClick={() => setMenuOpen(!menuOpen)}
         >
           {menuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
       </div>
 
-      {/* Mobile Glassy Dropdown Menu Drawer */}
       {menuOpen && (
         <div
           className="absolute top-[64px] left-0 right-0 z-50 border-b px-6 py-6 flex flex-col gap-4 font-sans select-none animate-text-reveal backdrop-blur-xl"
@@ -100,7 +94,7 @@ export default function Navbar() {
             <a
               key={item}
               href={href}
-              className="text-[#A0A0A0] hover:text-white text-[14px] font-medium py-1 transition-colors duration-150"
+              className="text-[#C3C3D1] hover:text-white text-[14px] font-medium py-1 transition-colors duration-150"
               onClick={() => setMenuOpen(false)}
             >
               {item}
@@ -109,7 +103,7 @@ export default function Navbar() {
           <div className="h-[1px] bg-[rgba(255,255,255,0.06)] my-1" />
           <Link
             href="/login"
-            className="text-[#A0A0A0] hover:text-white text-[14px] font-medium py-1 transition-colors duration-150"
+            className="text-[#C3C3D1] hover:text-white text-[14px] font-medium py-1 transition-colors duration-150"
             onClick={() => setMenuOpen(false)}
           >
             Login
@@ -120,7 +114,7 @@ export default function Navbar() {
             style={{ background: 'linear-gradient(135deg, #818CF8, #22D3EE)' }}
             onClick={() => setMenuOpen(false)}
           >
-            Start Free →
+            Start Free -&gt;
           </Link>
         </div>
       )}

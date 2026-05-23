@@ -44,11 +44,11 @@ const FinalCTASection = dynamic(() => import('@/components/marketing/FinalCTASec
 });
 
 export const metadata = {
-  title: 'AutoFlow — Turn Instagram Comments Into AI-Powered Revenue',
+  title: 'AutoFlow - Turn Instagram Comments Into AI-Powered Revenue',
   description:
     'AutoFlow: comment-to-DM automation, AI inbox, workflows, and analytics for Indian creators. Free plan. Meta-approved.',
   openGraph: {
-    title: 'AutoFlow — Instagram AI Automation',
+    title: 'AutoFlow - Instagram AI Automation',
     description: 'Comment-to-DM, AI inbox, workflows, and analytics for creators.',
     type: 'website',
   },

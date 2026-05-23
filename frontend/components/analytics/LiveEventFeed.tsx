@@ -58,12 +58,12 @@ export function LiveEventFeed({
       <div className="flex items-center justify-between mb-3 shrink-0">
         <div>
           <h3 className="text-[var(--af-text-primary)] font-semibold text-sm flex items-center gap-2">
-            <Sparkles size={14} className="text-violet-400" />
+            <Sparkles size={14} className="text-violet-400 dashboard-icon-soft" />
             Live event stream
           </h3>
           {!compact && (
             <p className="text-[var(--af-text-muted)] text-xs mt-0.5">
-              DMs, AI replies, workflows, and leads
+              DMs, AI replies, workflows, and captured leads
             </p>
           )}
         </div>
@@ -76,10 +76,10 @@ export function LiveEventFeed({
       <div className={cn('space-y-2 overflow-y-auto', compact ? 'max-h-[280px]' : 'max-h-[420px]')}>
         {list.length === 0 ? (
           <p className="text-xs text-[var(--af-text-muted)] py-8 text-center">
-            No events yet — automations will appear here
+            No events yet. Automation activity will appear here.
           </p>
         ) : (
-          list.map((event) => {
+          list.map((event, index) => {
             const Icon = iconMap[event.type] ?? Zap;
             return (
               <div
@@ -88,9 +88,10 @@ export function LiveEventFeed({
               >
                 <div
                   className={cn(
-                    'w-8 h-8 rounded-lg border flex items-center justify-center shrink-0',
+                    'w-8 h-8 rounded-lg border flex items-center justify-center shrink-0 dashboard-icon-soft',
                     severityStyles[event.severity],
                   )}
+                  style={{ animationDelay: `${index * 0.18}s` }}
                 >
                   <Icon size={14} />
                 </div>

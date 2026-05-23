@@ -1,6 +1,6 @@
 'use client';
 
-import { Search, Sparkles, Command } from 'lucide-react';
+import { Search, Sparkles, Command, Sun, Moon, Eclipse } from 'lucide-react';
 import { NotificationBellButton } from '@/components/notifications/NotificationCenter';
 import { WorkspaceSwitcher } from '@/components/workspace/WorkspaceSwitcher';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -26,10 +26,16 @@ const pageTitles: Record<string, string> = {
   '/design-system': 'Design System',
 };
 
+const themeOptions = [
+  { value: 'light', label: 'Day', icon: Sun },
+  { value: 'dark', label: 'Night', icon: Moon },
+  { value: 'amoled', label: 'AMOLED', icon: Eclipse },
+] as const;
+
 export default function Navbar() {
   const pathname = usePathname();
   const { user } = useAuth();
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const setCommandOpen = useCommandStore((s) => s.setOpen);
   const workspaceId = useAuthStore((s) => s.workspaceId);
   const toggleCopilot = useAiCopilotStore((s) => s.toggleOpen);
@@ -49,7 +55,6 @@ export default function Navbar() {
         WebkitBackdropFilter: 'blur(20px)',
       }}
     >
-      {/* ── Page title ──────────────────────────────────── */}
       <div className="flex items-center gap-3 min-w-0 ml-8 md:ml-0">
         <h1
           className="font-semibold text-base truncate tracking-tight"
@@ -62,12 +67,11 @@ export default function Navbar() {
             className="hidden lg:inline text-[10px] font-mono truncate max-w-[120px]"
             style={{ color: 'var(--text-muted)' }}
           >
-            ws:{workspaceId.slice(0, 8)}…
+            ws:{workspaceId.slice(0, 8)}...
           </span>
         )}
       </div>
 
-      {/* ── Search / Command palette ─────────────────────── */}
       <div className="flex items-center gap-2 flex-1 max-w-md justify-end md:justify-center">
         <button
           type="button"
@@ -112,11 +116,9 @@ export default function Navbar() {
         </Button>
       </div>
 
-      {/* ── Right actions ────────────────────────────────── */}
       <div className="flex items-center gap-2 shrink-0">
         <WorkspaceSwitcher />
 
-        {/* AI Copilot button — gradient glow style */}
         <button
           type="button"
           onClick={toggleCopilot}
@@ -137,28 +139,44 @@ export default function Navbar() {
           }}
         >
           <Sparkles size={14} />
-          AI Copilot
+          FLOWAI
         </button>
 
-        {/* Theme toggle */}
-        <button
-          type="button"
-          onClick={toggleTheme}
-          className="text-[10px] px-2 py-1 rounded-lg uppercase transition-colors"
+        <div
+          className="hidden md:flex items-center rounded-xl p-1"
           style={{
-            color: 'var(--text-muted)',
             border: '1px solid var(--border-glass)',
+            background: 'rgba(255,255,255,0.03)',
           }}
-          title="Toggle theme"
+          aria-label="Theme switcher"
         >
-          {theme === 'light' ? '☀' : theme === 'amoled' ? '◼' : '◐'}
-        </button>
+          {themeOptions.map((option) => {
+            const Icon = option.icon;
+            const active = theme === option.value;
+            return (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setTheme(option.value)}
+                className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[10px] font-medium transition-all"
+                style={{
+                  color: active ? 'var(--text-primary)' : 'var(--text-muted)',
+                  background: active ? 'rgba(129,140,248,0.12)' : 'transparent',
+                  boxShadow: active ? '0 0 0 1px rgba(129,140,248,0.16) inset' : 'none',
+                }}
+                title={`Switch to ${option.label.toLowerCase()} mode`}
+              >
+                <Icon size={12} />
+                {option.label}
+              </button>
+            );
+          })}
+        </div>
 
         <NotificationBellButton />
 
-        {/* Avatar */}
         <div
-          className="w-8 h-8 rounded-full flex items-center justify-center cursor-pointer text-white text-xs font-bold"
+          className="w-8 h-8 rounded-full flex items-center justify-center cursor-pointer text-white text-xs font-bold dashboard-icon-soft"
           style={{
             background: 'linear-gradient(135deg, #818CF8, #22D3EE)',
             boxShadow: '0 0 12px rgba(129,140,248,0.35)',

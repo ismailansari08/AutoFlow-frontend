@@ -25,7 +25,7 @@ export default function HeroSection() {
           >
             <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_8px_#34d399]" />
             <span className="text-white text-xs font-medium tracking-wide">
-              Meta Tech Provider • AI-native automation
+              Official Instagram workflows with AI-assisted engagement
             </span>
           </motion.div>
 
@@ -33,22 +33,18 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="text-white text-4xl sm:text-5xl lg:text-[3.25rem] font-extrabold leading-[1.1] tracking-tight max-w-[640px] mb-5"
+            className="text-white text-4xl sm:text-5xl lg:text-[3.25rem] font-extrabold leading-[1.08] tracking-tight max-w-[700px] mb-5"
           >
-            Turn Every Instagram Comment Into{' '}
-            <span className="bg-gradient-to-r from-[#818CF8] via-[#C084FC] to-[#22D3EE] bg-clip-text text-transparent">
-              AI-Powered Revenue
-            </span>
+            Convert Instagram comments into qualified conversations automatically
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-slate-400 text-base sm:text-lg leading-relaxed max-w-[500px] mb-8"
+            className="text-slate-300 text-base sm:text-lg leading-relaxed max-w-[560px] mb-8"
           >
-            Keyword comment → instant DM. AI replies, unified inbox, and live
-            workflows — the operating system for creator growth.
+            Trigger instant DMs, guide replies with AI, and manage every lead from one operating system built for creators and growth teams.
           </motion.p>
 
           <motion.div
@@ -57,12 +53,12 @@ export default function HeroSection() {
             transition={{ delay: 0.3 }}
             className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto mb-8"
           >
-            <MagneticButton href="/signup">Get Started Free →</MagneticButton>
+            <MagneticButton href="/signup">Start free -&gt;</MagneticButton>
             <Link
               href="#demo"
               className="border border-white/20 text-white hover:bg-white/5 font-medium text-sm px-6 py-3.5 rounded-full transition-all text-center flex items-center justify-center hover:scale-[1.02] active:scale-95"
             >
-              Watch it live
+              See the platform in action
             </Link>
           </motion.div>
 
@@ -82,8 +78,8 @@ export default function HeroSection() {
                 </div>
               ))}
             </div>
-            <span className="text-slate-500 text-xs sm:text-sm font-medium">
-              Trusted by 14,000+ creators
+            <span className="text-slate-400 text-xs sm:text-sm font-medium">
+              Trusted by 14,000+ creators, operators, and local brands
             </span>
           </motion.div>
         </div>

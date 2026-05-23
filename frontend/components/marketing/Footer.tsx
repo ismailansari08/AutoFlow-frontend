@@ -8,8 +8,6 @@ export default function Footer() {
     >
       <div className="page-container max-w-[1100px]">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-          
-          {/* Brand Logo & Intro */}
           <div className="md:col-span-2 select-none">
             <div className="flex items-center gap-2.5 mb-4 group cursor-default">
               <div className="w-7 h-7 rounded-lg bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] flex items-center justify-center text-white transition-all duration-300">
@@ -23,12 +21,11 @@ export default function Footer() {
                 AutoFlow<span className="text-neutral-400 font-light ml-0.5">.</span>
               </span>
             </div>
-            <p className="text-[#606060] text-sm leading-relaxed max-w-xs font-normal">
-              Instagram DM automation built for creators and local businesses. Comment-to-DM, AI replies, and sales conversion scaling.
+            <p className="text-slate-400 text-sm leading-relaxed max-w-sm font-normal">
+              Instagram engagement infrastructure for creators, operators, and local businesses that need faster replies and cleaner lead handling.
             </p>
           </div>
 
-          {/* Product Links */}
           <div>
             <div className="text-white text-[12px] font-bold tracking-wider uppercase mb-4 select-none">
               Product
@@ -44,7 +41,7 @@ export default function Footer() {
                 <Link
                   key={item.label}
                   href={item.href}
-                  className="text-[#606060] hover:text-white text-[13px] transition-all duration-150 hover:translate-x-0.5 font-medium block"
+                  className="text-slate-400 hover:text-white text-[13px] transition-all duration-150 hover:translate-x-0.5 font-medium block"
                 >
                   {item.label}
                 </Link>
@@ -52,7 +49,6 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Company Links */}
           <div>
             <div className="text-white text-[12px] font-bold tracking-wider uppercase mb-4 select-none">
               Company
@@ -67,7 +63,7 @@ export default function Footer() {
                 <Link
                   key={item.label}
                   href={item.href}
-                  className="text-[#606060] hover:text-white text-[13px] transition-all duration-150 hover:translate-x-0.5 font-medium block"
+                  className="text-slate-400 hover:text-white text-[13px] transition-all duration-150 hover:translate-x-0.5 font-medium block"
                 >
                   {item.label}
                 </Link>
@@ -76,13 +72,12 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* BOTTOM METADATA BAR */}
         <div className="border-t border-[rgba(255,255,255,0.06)] pt-6 flex flex-col md:flex-row justify-between items-center gap-3 select-none">
-          <div className="text-[#404040] text-[12px] font-normal font-sans">
-            © 2026 AutoFlow. All rights reserved.
+          <div className="text-slate-500 text-[12px] font-normal font-sans">
+            Copyright 2026 AutoFlow. All rights reserved.
           </div>
-          <div className="text-[#404040] text-[12px] font-normal font-sans">
-            Meta Tech Provider • Built for creators and local businesses ❤️
+          <div className="text-slate-500 text-[12px] font-normal font-sans text-center">
+            Built for official Instagram automation workflows and collaborative inbox operations.
           </div>
         </div>
       </div>

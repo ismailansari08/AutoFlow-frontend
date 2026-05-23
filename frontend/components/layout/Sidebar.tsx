@@ -82,7 +82,7 @@ function SidebarContent({
                 AutoFlow
               </span>
               <Badge variant="ai" className="mt-1">
-                AI OS
+                FLOWAI
               </Badge>
             </div>
           )}

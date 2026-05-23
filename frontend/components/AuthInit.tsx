@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import api from '@/lib/api/auth.api';
+import api, { refreshAccessToken } from '@/lib/api/auth.api';
 import { useAuthStore } from '@/lib/store/auth.store';
 import { useWorkspaceStore } from '@/lib/store/workspace.store';
 import { setAuthCookie } from '@/lib/utils/auth-cookie';
@@ -22,16 +22,18 @@ export function AuthInit({ children }: { children: React.ReactNode }) {
       const refreshToken = localStorage.getItem('refreshToken');
       const workspaceId = localStorage.getItem('workspaceId');
 
-      if (!token) {
+      if (!token && !refreshToken) {
         if (!cancelled) setAuthReady(true);
         return;
       }
 
-      setAuthCookie(token);
-      updateTokens(token, refreshToken ?? '');
+      if (token) {
+        setAuthCookie(token);
+        updateTokens(token, refreshToken ?? '');
+      }
       if (workspaceId) setWorkspaceId(workspaceId);
 
-      try {
+      const loadProfile = async () => {
         const { data } = await api.get('/users/me');
         if (cancelled) return;
         setUser({
@@ -45,8 +47,19 @@ export function AuthInit({ children }: { children: React.ReactNode }) {
         if (wsId) setWorkspaceId(wsId);
         useAuthStore.setState({ isAuthenticated: true });
         await useWorkspaceStore.getState().loadWorkspaces();
+      };
+
+      try {
+        await loadProfile();
       } catch {
-        if (!cancelled) clearAuth();
+        try {
+          const nextToken = await refreshAccessToken(refreshToken ?? undefined);
+          if (!nextToken) throw new Error('No refresh token available');
+          setAuthCookie(nextToken);
+          await loadProfile();
+        } catch {
+          if (!cancelled) clearAuth();
+        }
       } finally {
         if (!cancelled) setAuthReady(true);
       }

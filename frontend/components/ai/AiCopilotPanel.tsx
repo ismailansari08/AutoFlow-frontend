@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import {
   Sparkles, X, Send, Minimize2, Maximize2,
   Zap, MessageSquare, GitBranch, Lightbulb,
-  ChevronRight, RotateCcw, ExternalLink,
+  ChevronRight, RotateCcw, ExternalLink, Bot, Clock3, WandSparkles,
 } from 'lucide-react';
 import { useAiCopilot } from '@/lib/hooks/useAiCopilot';
 import { AiThinking } from './AiThinking';
@@ -13,10 +13,10 @@ import { useRouter } from 'next/navigation';
 import { useAiCopilotStore } from '@/lib/store/aiCopilot.store';
 
 const QUICK_PROMPTS = [
-  { icon: '⚡', label: 'Auto-DM "price" commenters', prompt: 'Create a workflow that sends a DM when someone comments "price"' },
-  { icon: '🎯', label: 'Follow-up leads after 24h', prompt: 'Build a workflow to follow up with leads who haven\'t replied in 24 hours' },
-  { icon: '🤖', label: 'AI reply to DMs', prompt: 'Create a workflow that uses AI to auto-reply to incoming DMs' },
-  { icon: '📊', label: 'Optimize my workflows', prompt: 'Analyze my workflows and suggest optimizations' },
+  { icon: Zap, label: 'Auto-DM price commenters', prompt: 'Create a workflow that sends a DM when someone comments "price"' },
+  { icon: Clock3, label: 'Follow up after 24 hours', prompt: 'Build a workflow to follow up with leads who have not replied in 24 hours' },
+  { icon: Bot, label: 'AI reply to incoming DMs', prompt: 'Create a workflow that uses AI to auto-reply to incoming DMs' },
+  { icon: WandSparkles, label: 'Optimize my workflows', prompt: 'Analyze my workflows and suggest optimizations' },
 ];
 
 export function AiCopilotPanel() {
@@ -67,7 +67,6 @@ export function AiCopilotPanel() {
 
   const handleOpenWorkflow = useCallback(() => {
     if (draftWorkflow) {
-      // Store draft in localStorage for workflows page to pick up
       localStorage.setItem('af_workflow_draft', JSON.stringify(draftWorkflow));
       setOpen(false);
       router.push('/workflows?draft=1');
@@ -87,15 +86,14 @@ export function AiCopilotPanel() {
         ai-copilot-panel-glow`}
       style={{ maxHeight: 'calc(100vh - 100px)' }}
     >
-      {/* Header */}
       <div className="flex items-center gap-3 px-4 h-14 border-b border-white/5 shrink-0">
-        <div className="relative flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-br from-violet-600 to-fuchsia-600 shrink-0">
+        <div className="relative flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-br from-violet-600 to-fuchsia-600 shrink-0 dashboard-icon-soft">
           <Sparkles size={14} className="text-white" />
           <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-[#0d0d14] animate-pulse" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-white leading-none">AutoFlow AI</p>
-          <p className="text-[10px] text-violet-400/60 mt-0.5">Copilot · Always on</p>
+          <p className="text-sm font-semibold text-white leading-none">FLOWAI</p>
+          <p className="text-[10px] text-violet-200/60 mt-0.5">Assistant · Always on</p>
         </div>
         <div className="flex items-center gap-1">
           <button
@@ -117,39 +115,40 @@ export function AiCopilotPanel() {
 
       {!minimized && (
         <>
-          {/* Messages area */}
           <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 scrollbar-thin">
             {messages.length === 0 ? (
               <div className="space-y-4">
-                {/* Welcome */}
                 <div className="flex items-start gap-2.5">
-                  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center shrink-0 mt-0.5 dashboard-icon-soft">
                     <Sparkles size={12} className="text-white" />
                   </div>
                   <div className="bg-white/5 border border-white/8 rounded-xl rounded-tl-sm px-3 py-2.5 max-w-[280px]">
                     <p className="text-sm text-white/80 leading-relaxed">
-                      Hey! 👋 I&apos;m your AI copilot. Tell me what to automate and I&apos;ll build the workflow for you.
+                      I can help you build workflows, review inbox automation, and suggest improvements based on your current setup.
                     </p>
                   </div>
                 </div>
 
-                {/* Quick prompts */}
                 <div className="space-y-1.5">
                   <p className="text-[10px] font-medium text-white/30 uppercase tracking-widest px-1">Quick actions</p>
-                  {QUICK_PROMPTS.map((q) => (
+                  {QUICK_PROMPTS.map((promptItem, index) => (
                     <button
-                      key={q.label}
-                      onClick={() => sendMessage(q.prompt)}
+                      key={promptItem.label}
+                      onClick={() => sendMessage(promptItem.prompt)}
                       className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl bg-white/3 border border-white/6 hover:border-violet-500/30 hover:bg-violet-500/5 transition-all text-left group"
                     >
-                      <span className="text-base shrink-0">{q.icon}</span>
-                      <span className="text-xs text-white/60 group-hover:text-white/80 transition-colors">{q.label}</span>
+                      <div
+                        className="w-7 h-7 rounded-lg bg-violet-500/10 border border-violet-500/10 flex items-center justify-center dashboard-icon-soft"
+                        style={{ animationDelay: `${index * 0.3}s` }}
+                      >
+                        <promptItem.icon size={13} className="text-violet-300 shrink-0" />
+                      </div>
+                      <span className="text-xs text-white/60 group-hover:text-white/80 transition-colors">{promptItem.label}</span>
                       <ChevronRight size={12} className="ml-auto text-white/20 group-hover:text-violet-400 transition-colors" />
                     </button>
                   ))}
                 </div>
 
-                {/* Recommendations */}
                 {recommendations.length > 0 && (
                   <div className="space-y-1.5">
                     <p className="text-[10px] font-medium text-white/30 uppercase tracking-widest px-1">Recommendations</p>
@@ -157,7 +156,7 @@ export function AiCopilotPanel() {
                       {recommendations.map((rec, i) => (
                         <div key={i} className="flex items-start gap-2 px-3 py-2 rounded-xl bg-amber-500/5 border border-amber-500/10">
                           <Lightbulb size={12} className="text-amber-400 shrink-0 mt-0.5" />
-                          <p className="text-[11px] text-white/50 leading-relaxed">{rec.replace(/^[💡⚡🎯📊]\s*/, '')}</p>
+                          <p className="text-[11px] text-white/55 leading-relaxed">{rec}</p>
                         </div>
                       ))}
                     </div>
@@ -172,7 +171,7 @@ export function AiCopilotPanel() {
                     className={`flex items-start gap-2.5 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
                   >
                     {msg.role === 'assistant' && (
-                      <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center shrink-0 mt-0.5">
+                      <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center shrink-0 mt-0.5 dashboard-icon-soft">
                         <Sparkles size={12} className="text-white" />
                       </div>
                     )}
@@ -197,7 +196,7 @@ export function AiCopilotPanel() {
 
                 {isThinking && (
                   <div className="flex items-start gap-2.5">
-                    <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center shrink-0 mt-0.5">
+                    <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center shrink-0 mt-0.5 dashboard-icon-soft">
                       <Sparkles size={12} className="text-white" />
                     </div>
                     <div className="bg-white/5 border border-white/8 rounded-xl rounded-tl-sm px-3 py-2.5">
@@ -206,7 +205,6 @@ export function AiCopilotPanel() {
                   </div>
                 )}
 
-                {/* Workflow Draft Card */}
                 {mode === 'workflow-draft' && draftWorkflow && (
                   <div className="border border-violet-500/25 rounded-xl bg-violet-500/5 p-3 space-y-2">
                     <div className="flex items-center gap-2">
@@ -237,7 +235,6 @@ export function AiCopilotPanel() {
             )}
           </div>
 
-          {/* Tab bar */}
           {messages.length > 0 && (
             <div className="flex items-center gap-1 px-4 py-1.5 border-t border-white/5">
               <button
@@ -268,7 +265,6 @@ export function AiCopilotPanel() {
             </div>
           )}
 
-          {/* Input */}
           <div className="px-3 pb-3 shrink-0">
             <div className="flex items-end gap-2 bg-white/4 border border-white/8 rounded-xl px-3 py-2 focus-within:border-violet-500/40 transition-colors">
               <textarea
@@ -296,7 +292,7 @@ export function AiCopilotPanel() {
               </button>
             </div>
             <p className="text-[10px] text-white/15 text-center mt-1.5">
-              ↵ to send · Shift+↵ new line
+              Enter to send · Shift + Enter for a new line
             </p>
           </div>
         </>
@@ -305,9 +301,8 @@ export function AiCopilotPanel() {
   );
 }
 
-/** Floating trigger button shown when panel is closed */
 export function AiCopilotTrigger({ className = '' }: { className?: string }) {
-  const { open, setOpen, toggleOpen } = useAiCopilotStore();
+  const { open, toggleOpen } = useAiCopilotStore();
 
   if (open) return null;
 
@@ -315,8 +310,8 @@ export function AiCopilotTrigger({ className = '' }: { className?: string }) {
     <button
       id="ai-copilot-trigger"
       onClick={toggleOpen}
-      title="Open AI Copilot"
-      aria-label="Open AI Copilot"
+      title="Open FLOWAI"
+      aria-label="Open FLOWAI"
       className={`fixed bottom-6 right-6 z-[8999] w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-600 to-fuchsia-600 shadow-lg shadow-violet-900/50 flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-200 ai-copilot-trigger-glow group ${className}`}
     >
       <Sparkles size={22} className="text-white group-hover:rotate-12 transition-transform duration-300" />

@@ -93,23 +93,45 @@
 /* Light theme */
 .light,
 [data-theme='light'] {
+  --bg-main: #f8fafc;
+  --bg-sidebar: #eef2ff;
+  --bg-card: #ffffff;
+  --bg-popover: #ffffff;
   --af-bg-base: #ffffff;
   --af-bg-elevated: #f8fafc;
   --af-bg-card: #f1f5f9;
   --af-bg-muted: #e2e8f0;
   --af-bg-glass: rgba(255, 255, 255, 0.85);
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
   --af-text-primary: #0f172a;
   --af-text-secondary: #475569;
   --af-text-muted: #64748b;
+  --border-glass: rgba(15, 23, 42, 0.08);
+  --border-glow: rgba(99, 102, 241, 0.18);
   --af-border-subtle: rgba(15, 23, 42, 0.08);
   --af-shadow-glow: 0 0 40px rgba(59, 130, 246, 0.12);
+  --alert-error-bg: rgba(239, 68, 68, 0.08);
+  --alert-error-border: rgba(239, 68, 68, 0.2);
+  --alert-warn-bg: rgba(245, 158, 11, 0.08);
+  --alert-warn-border: rgba(245, 158, 11, 0.2);
+  --alert-success-bg: rgba(16, 185, 129, 0.08);
+  --alert-success-border: rgba(16, 185, 129, 0.2);
+  --alert-info-bg: rgba(99, 102, 241, 0.08);
+  --alert-info-border: rgba(99, 102, 241, 0.2);
 }
 
 /* AMOLED */
 .amoled {
+  --bg-main: #000000;
+  --bg-sidebar: #030303;
+  --bg-card: #080808;
+  --bg-popover: #0b0b0b;
   --af-bg-base: #000000;
   --af-bg-elevated: #050505;
   --af-bg-card: #0a0a0a;
+  --border-glass: rgba(255, 255, 255, 0.05);
 }
 
 @media (prefers-reduced-motion: reduce) {

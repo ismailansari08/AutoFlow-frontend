@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils/cn';
 type Variant = 'dark' | 'light' | 'cinematic';
 
 const variants: Record<Variant, string> = {
-  dark: 'text-white',
+  dark: 'text-white bg-[var(--bg-main)]',
   light: 'bg-white text-slate-900',
   cinematic:
     'text-white premium-radial-glow premium-dot-grid relative overflow-hidden',
@@ -29,7 +29,6 @@ export function MarketingSection({
     <section
       id={id}
       className={cn(variants[variant], !noPadding && 'py-16 sm:py-20 md:py-28', className)}
-      style={variant !== 'light' ? { background: 'var(--bg-main)' } : undefined}
     >
       <div className="page-container max-w-[1100px] relative z-10">{children}</div>
     </section>

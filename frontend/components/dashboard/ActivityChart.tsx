@@ -17,8 +17,15 @@ const data = [
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload?.length) {
     return (
-      <div className="bg-[#1F2937] border border-white/10 rounded-xl px-3 py-2.5 text-xs shadow-xl">
-        <div className="text-gray-400 mb-1.5 font-medium">{label}</div>
+      <div
+        className="rounded-xl px-3 py-2.5 text-xs shadow-xl"
+        style={{
+          background: 'var(--bg-popover)',
+          border: '1px solid var(--border-glass)',
+          color: 'var(--text-primary)',
+        }}
+      >
+        <div className="mb-1.5 font-medium" style={{ color: 'var(--text-muted)' }}>{label}</div>
         {payload.map((p: any) => (
           <div key={p.name} className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full" style={{ background: p.color }} />
@@ -35,11 +42,14 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export default function ActivityChart() {
   return (
-    <div className="bg-[#111827] border border-white/5 rounded-xl p-5">
+    <div
+      className="premium-card rounded-xl p-5"
+      style={{ background: 'var(--bg-card)' }}
+    >
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-white font-semibold text-sm">Activity (Last 7 Days)</h3>
-          <p className="text-gray-500 text-xs mt-0.5">
+          <h3 className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>Activity (Last 7 Days)</h3>
+          <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
             DMs and comments over the last 7 days
           </p>
         </div>
@@ -50,7 +60,7 @@ export default function ActivityChart() {
           ].map((item) => (
             <div key={item.label} className="flex items-center gap-1.5">
               <div className="w-2 h-2 rounded-full" style={{ background: item.color }} />
-              <span className="text-gray-500 text-xs">{item.label}</span>
+              <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{item.label}</span>
             </div>
           ))}
         </div>
@@ -71,7 +81,7 @@ export default function ActivityChart() {
             dataKey="day"
             axisLine={false}
             tickLine={false}
-            tick={{ fill: '#6B7280', fontSize: 11 }}
+            tick={{ fill: 'var(--text-muted)', fontSize: 11 }}
           />
           <YAxis hide />
           <Tooltip content={<CustomTooltip />} />

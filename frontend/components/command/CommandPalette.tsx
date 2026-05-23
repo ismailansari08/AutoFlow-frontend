@@ -80,7 +80,7 @@ export function CommandPalette() {
       },
       {
         id: 'ai-copilot',
-        label: 'Open AI Copilot',
+        label: 'Open FLOWAI',
         hint: '⌘⇧K',
         icon: <Sparkles size={16} />,
         action: () => {

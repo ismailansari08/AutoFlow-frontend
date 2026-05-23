@@ -1,132 +1,127 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Sparkles, Zap, ArrowRight, TrendingUp } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Sparkles, Zap, ArrowRight, TrendingUp, BrainCircuit } from 'lucide-react';
 import { useAiCopilotStore } from '@/lib/store/aiCopilot.store';
 import { useAiCopilot } from '@/lib/hooks/useAiCopilot';
 import { AiThinking, AiShimmerCard } from '@/components/ai/AiThinking';
-import { StreamingText } from '@/components/ai/StreamingText';
 
 const INSIGHT_CYCLE = [
-  '🔥 3 high-intent leads replied in the last hour. Consider following up now.',
-  '⚡ Your "price" keyword trigger has a 78% DM open rate — above average.',
-  '🎯 Leads tagged "hot" have 3x higher conversion. Prioritize them in inbox.',
-  '📈 Workflow response time avg: 1.2s. Your automations are running smoothly.',
+  'Three high-intent leads replied in the last hour. A fast follow-up is likely to perform well.',
+  'Your "price" keyword trigger is holding a strong DM open rate and is outperforming the workspace average.',
+  'Leads tagged as hot are converting at a higher rate. Prioritizing them in the inbox should improve close speed.',
+  'Workflow response time is stable and healthy. Your automations are currently running without visible delay.',
 ];
 
 export function AiCopilotDashboardWidget() {
   const setOpen = useAiCopilotStore((s) => s.setOpen);
-  const { sendMessage, generateRecommendations, recommendations } = useAiCopilot();
+  const { sendMessage, generateRecommendations } = useAiCopilot();
   const [insightIdx, setInsightIdx] = useState(0);
-  const [insightText, setInsightText] = useState('');
-  const [isStreaming, setIsStreaming] = useState(false);
   const [loading, setLoading] = useState(true);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Cycle through insights with streaming effect
   useEffect(() => {
+    let mounted = true;
+
     generateRecommendations();
 
-    const stream = async (text: string) => {
-      setIsStreaming(true);
-      setInsightText('');
-      const words = text.split(' ');
-      let acc = '';
-      for (let i = 0; i < words.length; i++) {
-        acc += (i === 0 ? '' : ' ') + words[i];
-        setInsightText(acc);
-        await new Promise((r) => setTimeout(r, 35));
-      }
-      setIsStreaming(false);
+    const startCycle = async () => {
+      if (!mounted) return;
+      setLoading(true);
+      await new Promise((resolve) => setTimeout(resolve, 850));
+      if (!mounted) return;
       setLoading(false);
+
+      intervalRef.current = setInterval(() => {
+        setInsightIdx((prev) => (prev + 1) % INSIGHT_CYCLE.length);
+      }, 6500);
     };
 
-    stream(INSIGHT_CYCLE[0]);
-    const interval = setInterval(() => {
-      setInsightIdx((prev) => {
-        const next = (prev + 1) % INSIGHT_CYCLE.length;
-        stream(INSIGHT_CYCLE[next]);
-        return next;
-      });
-    }, 6000);
+    startCycle();
 
-    return () => clearInterval(interval);
+    return () => {
+      mounted = false;
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
   }, [generateRecommendations]);
 
   const quickActions = [
-    { label: 'Auto-DM "price"', prompt: 'Create a workflow to DM people who comment "price"' },
-    { label: 'Follow-up sequence', prompt: 'Build a 24h follow-up workflow for leads who haven\'t replied' },
-    { label: 'AI inbox replies', prompt: 'Create a workflow that auto-replies to DMs using AI' },
+    { label: 'Auto-DM price inquiries', prompt: 'Create a workflow to DM people who comment "price"' },
+    { label: 'Build a follow-up sequence', prompt: 'Build a 24h follow-up workflow for leads who have not replied' },
+    { label: 'Set AI inbox replies', prompt: 'Create a workflow that auto-replies to DMs using AI' },
   ];
 
   return (
     <AiShimmerCard
-      active={isStreaming}
+      active={loading}
       className="rounded-2xl border border-violet-500/15 bg-gradient-to-br from-violet-950/40 to-fuchsia-950/20 p-4 space-y-4"
     >
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center">
-            <Sparkles size={15} className="text-white" />
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center dashboard-icon-soft">
+            <BrainCircuit size={16} className="text-white" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-white">AI Copilot</p>
-            <p className="text-[10px] text-violet-400/60">Live intelligence</p>
+            <p className="text-sm font-semibold text-white">FLOWAI</p>
+            <p className="text-[10px] text-violet-200/60">Workspace intelligence</p>
           </div>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-[10px] text-emerald-400/70 font-medium">Active</span>
+          <span className="text-[10px] text-emerald-300/80 font-medium">Ready</span>
         </div>
       </div>
 
-      {/* Live AI Insight */}
-      <div className="bg-black/20 rounded-xl px-3.5 py-3 border border-white/5 min-h-[56px] flex items-center">
+      <div className="bg-black/20 rounded-xl px-3.5 py-3 border border-white/5 min-h-[72px] flex items-center">
         {loading ? (
-          <AiThinking size="sm" label="Analyzing workspace..." />
+          <AiThinking size="sm" label="Reviewing workspace activity" />
         ) : (
-          <p className="text-sm text-white/70 leading-relaxed">
-            <StreamingText text={insightText} isStreaming={isStreaming} />
-          </p>
+          <div key={insightIdx} className="animate-text-reveal">
+            <p className="text-sm text-white/75 leading-relaxed">
+              {INSIGHT_CYCLE[insightIdx]}
+            </p>
+          </div>
         )}
       </div>
 
-      {/* Insight dots */}
       <div className="flex items-center justify-center gap-1.5">
         {INSIGHT_CYCLE.map((_, i) => (
           <span
             key={i}
             className={`h-1 rounded-full transition-all duration-500 ${
               i === insightIdx
-                ? 'w-4 bg-violet-400'
-                : 'w-1 bg-white/15'
+                ? 'w-5 bg-violet-300'
+                : 'w-1.5 bg-white/15'
             }`}
           />
         ))}
       </div>
 
-      {/* Quick actions */}
       <div className="space-y-1.5">
         <p className="text-[10px] font-medium text-white/25 uppercase tracking-widest">Quick actions</p>
-        {quickActions.map((a) => (
+        {quickActions.map((action, index) => (
           <button
-            key={a.label}
+            key={action.label}
             onClick={() => {
               setOpen(true);
-              setTimeout(() => sendMessage(a.prompt), 150);
+              setTimeout(() => sendMessage(action.prompt), 150);
             }}
             className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-white/3 border border-white/6 hover:border-violet-500/25 hover:bg-violet-500/5 transition-all text-left group"
           >
             <div className="flex items-center gap-2">
-              <Zap size={11} className="text-violet-400 shrink-0" />
-              <span className="text-xs text-white/55 group-hover:text-white/75 transition-colors">{a.label}</span>
+              <div
+                className="w-6 h-6 rounded-lg bg-violet-500/10 border border-violet-500/10 flex items-center justify-center dashboard-icon-soft"
+                style={{ animationDelay: `${index * 0.35}s` }}
+              >
+                <Zap size={11} className="text-violet-300 shrink-0" />
+              </div>
+              <span className="text-xs text-white/55 group-hover:text-white/80 transition-colors">{action.label}</span>
             </div>
             <ArrowRight size={11} className="text-white/20 group-hover:text-violet-400 group-hover:translate-x-0.5 transition-all" />
           </button>
         ))}
       </div>
 
-      {/* Open copilot */}
       <button
         onClick={() => setOpen(true)}
         id="dashboard-open-copilot-btn"
@@ -137,7 +132,7 @@ export function AiCopilotDashboardWidget() {
           text-sm font-semibold text-white group"
       >
         <Sparkles size={14} className="group-hover:rotate-12 transition-transform" />
-        Open AI Copilot
+        Open FLOWAI
         <TrendingUp size={12} className="opacity-60" />
       </button>
     </AiShimmerCard>
